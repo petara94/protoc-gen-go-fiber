@@ -37,15 +37,25 @@ func main() {
 					g.P(`  app.`+methodType+`("`, httpPath, `", func(c *fiber.Ctx) error {`)
 					g.P("      ctx, cancel := context.WithCancel(c.Context())")
 					g.P("      defer cancel()\n")
+
 					g.P("      md := metadata.New(nil)")
 					g.P("      c.Request().Header.VisitAll(func(key, value []byte) {")
 					g.P("      md.Append(string(key), string(value))")
 					g.P("      })\n")
+
 					g.P("      ctx = metadata.NewOutgoingContext(ctx, md)")
 					g.P("      var req ", method.Input.GoIdent, "")
 					g.P("      if err := c.BodyParser(&req); err != nil { return err }\n")
+
+					g.P("      if validator, ok := any(&req).(interface{ Validate() error }); ok {")
+					g.P("            if err := validator.Validate(); err != nil {")
+					g.P("                  return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{\"error\": err.Error()})")
+					g.P("            }")
+					g.P("      }\n")
+
 					g.P("      resp, err := client.", method.GoName, "(ctx, &req)")
 					g.P("      if err != nil { return err }\n")
+
 					g.P("      return c.JSON(resp)")
 					g.P("  })\n\n")
 				}
@@ -57,6 +67,7 @@ func main() {
 	})
 }
 
+// grpcOptionToMethodAndPathString узнает метод из google.api.http
 func grpcOptionToMethodAndPathString(opts *descriptorpb.MethodOptions) (string, string) {
 	ext := proto.GetExtension(opts, annotations.E_Http)
 	var methodType, path string
