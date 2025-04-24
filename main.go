@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/envoyproxy/protoc-gen-validate/validate"
 	annotations "google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -26,7 +27,7 @@ func main() {
 
 			for _, service := range f.Services {
 				g.P("func Register", service.GoName, "FiberRoutes(app *fiber.App, client ", service.GoName, "Server) {")
-				for _, method := range service.Methods {
+				for i, method := range service.Methods {
 					opts := method.Desc.Options().(*descriptorpb.MethodOptions)
 
 					methodType, httpPath := grpcOptionToMethodAndPathString(opts)
@@ -43,23 +44,39 @@ func main() {
 					g.P("      md.Append(string(key), string(value))")
 					g.P("      })\n")
 
-					g.P("      ctx = metadata.NewOutgoingContext(ctx, md)")
-					g.P("      var req ", method.Input.GoIdent, "")
-					g.P("      if err := c.BodyParser(&req); err != nil { return err }\n")
+					g.P("      ctx = metadata.NewOutgoingContext(ctx, md)\n")
 
-					g.P("      if validator, ok := any(&req).(interface{ Validate() error }); ok {")
-					g.P("            if err := validator.Validate(); err != nil {")
-					g.P("                  return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{\"error\": err.Error()})")
-					g.P("            }")
-					g.P("      }\n")
+					g.P("      var req ", method.Input.GoIdent)
+					if method.Input.GoIdent.GoName != "Empty" {
+						g.P("      if err := c.BodyParser(&req); err != nil { return err }\n")
+
+						hasValidation := false
+						for _, field := range method.Input.Fields {
+							if proto.HasExtension(field.Desc.Options(), validate.E_Rules) {
+								hasValidation = true
+								break
+							}
+						}
+
+						if hasValidation {
+							g.P("      if err := req.Validate(); err != nil {")
+							g.P("            return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{\"error\": err.Error()})")
+							g.P("      }\n")
+						}
+					}
 
 					g.P("      resp, err := client.", method.GoName, "(ctx, &req)")
 					g.P("      if err != nil { return err }\n")
 
 					g.P("      return c.JSON(resp)")
-					g.P("  })\n\n")
+
+					if i == len(service.Methods)-1 {
+						g.P("  })")
+					} else {
+						g.P("  })\n")
+					}
 				}
-				g.P("}")
+				g.P("}\n")
 			}
 		}
 
