@@ -1,7 +1,3 @@
-Конечно! Вот минимальный, понятный `README.md` для твоего проекта на основе присланного кода:
-
----
-
 # protoc-gen-fiber
 
 **protoc-gen-fiber** — это плагин для `protoc`, который автоматически генерирует маршруты для [Fiber](https://github.com/gofiber/fiber) на основе gRPC-сервисов и аннотаций `google.api.http`.
