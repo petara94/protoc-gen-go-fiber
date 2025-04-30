@@ -1,6 +1,6 @@
 # protoc-gen-fiber
 
-**protoc-gen-fiber** — это плагин для `protoc`, который автоматически генерирует маршруты для [Fiber](https://github.com/gofiber/fiber) на основе gRPC-сервисов и аннотаций `google.api.http`.
+**protoc-gen-fiber** — это плагин для `protoc` или `buf`, который автоматически генерирует маршруты для [Fiber](https://github.com/gofiber/fiber) на основе gRPC-сервисов и аннотаций `google.api.http`.
 
 ## Особенности
 - Генерация HTTP-обработчиков для Fiber по gRPC-сервисам.
@@ -8,6 +8,7 @@
 - Автоматическая валидация запросов через `protoc-gen-validate`.
 - Поддержка interceptor'ов для обработки ошибок и дополнительной логики.
 - Автоматическая конвертация заголовков HTTP в gRPC metadata.
+- **Важно** принимает только body
 
 ## Установка
 
@@ -27,7 +28,8 @@ import "google/api/annotations.proto";
 service ExampleService {
   rpc GetExample (GetExampleRequest) returns (GetExampleResponse) {
     option (google.api.http) = {
-      get: "/v1/example/{id}"
+      get: "/v1/example"
+      body: "*"
     };
   }
 }
