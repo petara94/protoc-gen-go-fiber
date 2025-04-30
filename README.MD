@@ -13,10 +13,12 @@
 ## Установка
 
 ```bash
-go install path/to/protoc-gen-fiber
+go install github.com/petara94/protoc-gen-fiber@latest
 ```
-
-(Замени `path/to` на актуальный путь к твоему плагину.)
+или для go 1.24+
+```bash
+go get -tool github.com/petara94/protoc-gen-fiber@latest
+```
 
 ## Использование
 
@@ -37,15 +39,14 @@ service ExampleService {
 
 2. Сгенерируй код:
 
-```bash
-protoc \
-  --proto_path=. \
-  --proto_path=third_party \
-  --fiber_out=. \
-  your_service.proto
+`buf.gen.yaml`
+```yaml
+version: v2
+plugins:
+  - local: [ "go",  "tool", "protoc-gen-fiber" ]
+    out: out_dir
+    opt: paths=source_relative
 ```
-
-(Добавь нужные опции поиска, в зависимости от расположения `google/api/annotations.proto`.)
 
 3. В приложении Fiber зарегистрируй маршруты:
 
