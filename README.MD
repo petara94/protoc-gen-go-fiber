@@ -1,7 +1,7 @@
-# protoc-gen-fiber
+# protoc-gen-go-fiber
 
-**protoc-gen-fiber** — это плагин для `protoc` или `buf`, который автоматически генерирует маршруты для [Fiber](https://github.com/gofiber/fiber) на основе gRPC-сервисов и аннотаций `google.api.http`.
-
+**protoc-gen-go-fiber** — это плагин для `protoc` или `buf`, который автоматически генерирует маршруты для [Fiber](https://github.com/gofiber/fiber) на основе gRPC-сервисов и аннотаций `google.api.http`.
+protoc-gen-go-fiber
 ## Особенности
 - Генерация HTTP-обработчиков для Fiber по gRPC-сервисам.
 - Поддержка методов: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
@@ -13,11 +13,11 @@
 ## Установка
 
 ```bash
-go install github.com/petara94/protoc-gen-fiber@latest
+go install github.com/petara94/protoc-gen-go-fiber@latest
 ```
 или для go 1.24+
 ```bash
-go get -tool github.com/petara94/protoc-gen-fiber@latest
+go get -tool github.com/petara94/protoc-gen-go-fiber@latest
 ```
 
 ## Использование
@@ -43,7 +43,7 @@ service ExampleService {
 ```yaml
 version: v2
 plugins:
-  - local: [ "go",  "tool", "protoc-gen-fiber" ]
+  - local: [ "go",  "tool", "protoc-gen-go-fiber" ]
     out: out_dir
     opt: paths=source_relative
 ```
