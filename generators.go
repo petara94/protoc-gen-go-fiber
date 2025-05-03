@@ -6,10 +6,11 @@ import (
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"slices"
 )
 
 func generateFile(plugin *protogen.Plugin) error {
+	flagInit()
+
 	for _, f := range plugin.Files {
 		if !f.Generate || len(f.Services) == 0 {
 			continue
@@ -22,11 +23,16 @@ func generateFile(plugin *protogen.Plugin) error {
 		generateImports(g, f)
 
 		for _, service := range f.Services {
-			g.P("func Register", service.GoName, "FiberRoutes(app *fiber.App, server ", service.GoName, "Server, interceptor grpc.UnaryServerInterceptor) {")
+			g.P("func Register", service.GoName, "FiberRoutes(app *", fiberImport.Ident("App"), ", server ", service.GoName, "Server, interceptor grpc.UnaryServerInterceptor) {")
+			for _, method := range service.Methods {
+				generateFiberMethodRote(g, method)
+			}
+			g.P("}")
+			g.P()
 
-			generateMethods(g, service)
-
-			g.P("}\n")
+			for _, method := range service.Methods {
+				generateMethods(g, method)
+			}
 		}
 	}
 
@@ -34,84 +40,67 @@ func generateFile(plugin *protogen.Plugin) error {
 }
 
 func generateImports(g *protogen.GeneratedFile, f *protogen.File) {
-	//g.Import("context")
-	g.Import("google.golang.org/grpc")
-	g.Import("github.com/gofiber/fiber/v2")
-	g.Import("google.golang.org/grpc/metadata")
-
-	if slices.ContainsFunc(f.Services, func(service *protogen.Service) bool {
-		return slices.ContainsFunc(service.Methods, func(method *protogen.Method) bool {
-			return slices.ContainsFunc(method.Input.Fields, func(field *protogen.Field) bool {
-				// is exported. 1 letter is exported
-				return field.GoName[0] >= 'A' && field.GoName[0] <= 'Z'
-			})
-		})
-	}) {
-		g.Import(protogen.GoImportPath(*flagErrorHandlersPackage))
-	}
+	g.Import(contextImport)
+	g.Import(fiberImport)
+	g.Import(grpcImport)
+	g.Import(grpcMetadataImport)
+	g.Import(errorHandlersImport)
 }
 
-func generateMethods(g *protogen.GeneratedFile, service *protogen.Service) {
-	for i, method := range service.Methods {
-		opts := method.Desc.Options().(*descriptorpb.MethodOptions)
+func generateMethods(g *protogen.GeneratedFile, method *protogen.Method) {
+	g.P("func ", generateRouteMethodName(method), `(c *`, fiberImport.Ident("Ctx"), `) error {`)
 
-		methodType, httpPath := grpcOptionToMethodAndPathString(opts)
-		if httpPath == "/" {
-			httpPath += string(service.Desc.FullName()) + "/" + string(method.Desc.Name())
-		}
+	g.P("		ctx, cancel := ", contextImport.Ident("WithCancel"), "(c.Context())")
+	g.P("		defer cancel()\n")
 
-		g.P(`	app.`+methodType+`("`, httpPath, `", func(c *`, fiberImport.Ident("Ctфывx"), `) error {`)
-		g.P("		ctx, cancel := context.WithCancel(c.Context())")
-		g.P("		defer cancel()\n")
+	g.P("		md := ", grpcMetadataImport.Ident("New"), "(nil)")
+	g.P("		c.Request().Header.VisitAll(func(key, value []byte) {")
+	g.P("		md.Append(string(key), string(value))")
+	g.P("		})\n")
 
-		g.P("		md := metadata.New(nil)")
-		g.P("		c.Request().Header.VisitAll(func(key, value []byte) {")
-		g.P("		md.Append(string(key), string(value))")
-		g.P("		})\n")
+	g.P("		ctx = metadata.NewIncomingContext(ctx, md)\n")
 
-		g.P("		ctx = metadata.NewIncomingContext(ctx, md)\n")
+	g.P("		var req ", method.Input.GoIdent)
 
-		g.P("		var req ", method.Input.GoIdent)
-
-		// use marshaller if we need
-		if method.Input.GoIdent.GoName != "Empty" {
-			g.P("		if err := protojson.Unmarshal(c.Body(), &req); err != nil { return err }\n")
-
-			hasValidation := false
-			for _, field := range method.Input.Fields {
-				if proto.HasExtension(field.Desc.Options(), validate.E_Rules) {
-					hasValidation = true
-					break
-				}
-			}
-
-			if hasValidation {
-				g.P("		if err := req.Validate(); err != nil {")
-				g.P("			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{\"error\": err.Error()})")
-				g.P("		}\n")
-			}
-		}
-
-		g.P("	handler := func(ctx context.Context, r any) (any, error) {")
-		g.P("		return server.", method.GoName, "(ctx, r.(*", method.Input.GoIdent, "))")
-		g.P("	}")
+	// use marshaller if we need
+	if method.Input.GoIdent.GoName != "Empty" {
+		g.P("		if err := ", jsonUnmarshalImport.Ident("Unmarshal"), "(c.Body(), &req); err != nil {")
+		g.P("			return ", errorHandlersImport.Ident(*flagUnmarshalErrorHandleFunc), "(c, err)")
+		g.P("		}")
 		g.P()
-		g.P("	info := &grpc.UnaryServerInfo{")
-		g.P("		Server: server,")
-		g.P(`		FullMethod: "/`, string(service.Desc.FullName()), "/", string(method.Desc.Name()), `",`)
-		g.P("	}")
 
-		g.P("	resp, err := interceptor(ctx, &req, info, handler)")
-		g.P("	if err != nil { return utils.HandleGRPCStatusError(c, err) }\n")
+		hasValidation := false
+		for _, field := range method.Input.Fields {
+			if proto.HasExtension(field.Desc.Options(), validate.E_Rules) {
+				hasValidation = true
+				break
+			}
+		}
 
-		g.P("	return c.JSON(resp)")
-
-		if i == len(service.Methods)-1 {
-			g.P("	})")
-		} else {
-			g.P("	})\n")
+		if hasValidation {
+			g.P("		if err := req.Validate(); err != nil {")
+			g.P("			return ", errorHandlersImport.Ident(*flagValidationErrorHandleFunc), "(c, err)")
+			g.P("		}")
+			g.P()
 		}
 	}
+
+	g.P("	handler := func(ctx context.Context, r any) (any, error) {")
+	g.P("		return server.", method.GoName, "(ctx, r.(*", method.Input.GoIdent, "))")
+	g.P("	}")
+	g.P()
+	g.P("	info := &", grpcImport.Ident("UnaryServerInfo"), "{")
+	g.P("		Server: server,")
+	g.P(`		FullMethod: "/`, string(method.Parent.Desc.FullName()), "/", string(method.Desc.Name()), `",`)
+	g.P("	}")
+
+	g.P("	resp, err := interceptor(ctx, &req, info, handler)")
+	g.P("	if err != nil { return utils.HandleGRPCStatusError(c, err) }\n")
+
+	g.P("	return c.JSON(resp)")
+
+	g.P("	}")
+
 }
 
 // grpcOptionToMethodAndPathString узнает метод из google.api.http

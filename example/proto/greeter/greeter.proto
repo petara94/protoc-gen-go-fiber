@@ -8,7 +8,7 @@ import "validate/validate.proto";
 option go_package = "gen/go/greeterpb;greeterpb";
 
 service GreeterService {
-  rpc SayHello (HelloRequest) returns (HelloResponse) {
+  rpc SayHello(HelloRequest) returns (HelloResponse) {
     option (google.api.http) = {
       post: "api/v1/hello"
       body: "*"

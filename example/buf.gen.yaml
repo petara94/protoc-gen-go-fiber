@@ -14,6 +14,6 @@ plugins:
     opt:
       - paths=source_relative
       - lang=go
-  - local: ["protoc-gen-go-fiber.exe"]
+  - local: ["../bin/protoc-gen-go-fiber"]
     out: gen/go
     opt: paths=source_relative
