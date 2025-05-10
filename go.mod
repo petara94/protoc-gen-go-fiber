@@ -6,7 +6,7 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/gofiber/fiber/v2 v2.52.6
 	google.golang.org/genproto/googleapis/api v0.0.0-20250421163800-61c742ae3ef0
-	google.golang.org/grpc v1.71.0
+	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -25,5 +25,3 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
 )
-
-tool github.com/petara94/protoc-gen-go-fiber

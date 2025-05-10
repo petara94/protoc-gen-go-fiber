@@ -1,25 +1,24 @@
-#PATH:=$(PATH)$(CURDIR)/../bin
+GOBIN=$(PWD)/bin
 
 generate:
-	go tool buf generate
+	bin/buf generate
 .PHONY: generate
 
 format:
-	go tool buf format -w
+	bin/buf format -w
 .PHONY: format
 
 update:
-	go tool buf dep update
+	bin/buf dep update
 .PHONY: update
 
 install_tools:
-	go get -tool github.com/bufbuild/buf/cmd/buf@latest \
-				google.golang.org/protobuf/cmd/protoc-gen-go@latest \
-				google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest \
-				github.com/envoyproxy/protoc-gen-validate@latest
-	go install tool
+	GOBIN=$(GOBIN) go install github.com/bufbuild/buf/cmd/buf@latest
+	GOBIN=$(GOBIN) go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	GOBIN=$(GOBIN) go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	GOBIN=$(GOBIN) go install github.com/envoyproxy/protoc-gen-validate@latest
 .PHONY: install_tools
 
 build_fiber_tool:
-	cd .. && go build -o bin/protoc-gen-go-fiber
+	cd .. && GOBIN=$(GOBIN) go install
 .PHONY: build_fiber_tool

@@ -3,17 +3,17 @@ clean: true
 inputs:
   - directory: proto
 plugins:
-  - local: ["go", "tool", "protoc-gen-go"]
+  - local: bin/protoc-gen-go
     out: gen/go
     opt: paths=source_relative
-  - local: ["go", "tool", "protoc-gen-go-grpc"]
+  - local: bin/protoc-gen-go-grpc
     out: gen/go
     opt: paths=source_relative
-  - local: ["go", "tool", "protoc-gen-validate"]
+  - local: bin/protoc-gen-validate
     out: gen/go
     opt:
       - paths=source_relative
       - lang=go
-  - local: ["../bin/protoc-gen-go-fiber"]
+  - local: bin/protoc-gen-go-fiber
     out: gen/go
     opt: paths=source_relative
