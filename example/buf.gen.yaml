@@ -23,4 +23,3 @@ plugins:
       - grpc_error_handle_func=HandleGRPCStatusError
       - unmarshal_error_handle_func=HandleUnmarshalError
       - validation_error_handle_func=HandleValidationError
-      - disable_grpc_interceptor=false
