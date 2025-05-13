@@ -100,10 +100,12 @@ func genFiberMethodRote(g *protogen.GeneratedFile, method *protogen.Method) {
 
 	methodType, httpPath := grpcOptionToMethodAndPathString(opts)
 	if httpPath == "/" {
-		httpPath += string(method.Parent.Desc.FullName()) + "/" + string(method.Desc.Name())
+		httpPath = fmt.Sprintf(`%s_%s_FullMethodName`, method.Parent.GoName, method.GoName)
+	} else {
+		httpPath = `"` + httpPath + `"`
 	}
 
-	g.P("	app.", methodType, `("`, httpPath, `", router.`, genRouteMethodName(method), `)`)
+	g.P("	app.", methodType, `(`, httpPath, `, router.`, genRouteMethodName(method), `)`)
 }
 
 // grpcOptionToMethodAndPathString узнает метод из google.api.http
