@@ -11,7 +11,10 @@ import (
 	json "encoding/json"
 	v2 "github.com/gofiber/fiber/v2"
 	utils "github.com/petara94/protoc-gen-go-fiber/utils"
+	xerrors "github.com/xakepp35/pkg/xerrors"
+	httpbody "google.golang.org/genproto/googleapis/api/httpbody"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
 	metadata "google.golang.org/grpc/metadata"
 )
 
@@ -31,6 +34,9 @@ func RegisterGreeterServiceFiberRoutes(app *v2.App, server GreeterServiceServer,
 	}
 
 	app.Post("api/v1/hello", router.__GreeterService_SayHello_Route)
+	app.Get("api/v1/print_random/:x/:y/image.png", router.__GreeterService_PrintRandomImagePNGPathParse_Route)
+	app.Get("api/v1/random_image.png", router.__GreeterService_PrintRandomImagePNGQueryParse_Route)
+	app.Get("/api/v1/test/types/:str/:i64", router.__GreeterService_TestTypesRead_Route)
 }
 
 func (r *__GreeterService_FiberRouter) __GreeterService_SayHello_Route(c *v2.Ctx) error {
@@ -44,7 +50,11 @@ func (r *__GreeterService_FiberRouter) __GreeterService_SayHello_Route(c *v2.Ctx
 
 	ctx = metadata.NewIncomingContext(ctx, md)
 
-	var req HelloRequest
+	var (
+		req  HelloRequest
+		resp any
+		err  error
+	)
 
 	if err := json.Unmarshal(c.Body(), &req); err != nil {
 		return utils.HandleUnmarshalError(c, err)
@@ -54,10 +64,6 @@ func (r *__GreeterService_FiberRouter) __GreeterService_SayHello_Route(c *v2.Ctx
 		return utils.HandleValidationError(c, err)
 	}
 
-	var (
-		resp any
-		err  error
-	)
 	if r.interceptor != nil {
 		handler := func(ctx context.Context, req any) (any, error) {
 			return r.server.SayHello(ctx, req.(*HelloRequest))
@@ -70,6 +76,210 @@ func (r *__GreeterService_FiberRouter) __GreeterService_SayHello_Route(c *v2.Ctx
 		resp, err = r.interceptor(ctx, &req, info, handler)
 	} else {
 		resp, err = r.server.SayHello(ctx, &req)
+	}
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, err)
+	}
+
+	return c.JSON(resp)
+}
+func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGPathParse_Route(c *v2.Ctx) error {
+	ctx, cancel := context.WithCancel(c.Context())
+	defer cancel()
+
+	md := metadata.New(nil)
+	c.Request().Header.VisitAll(func(key, value []byte) {
+		md.Append(string(key), string(value))
+	})
+
+	ctx = metadata.NewIncomingContext(ctx, md)
+
+	var (
+		req  PrintRandomImagePNGRequest
+		resp any
+		err  error
+	)
+
+	req.X, err = utils.ParseInt32(c.Params("x"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "x").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.Y, err = utils.ParseInt32(c.Params("y"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "y").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	if r.interceptor != nil {
+		handler := func(ctx context.Context, req any) (any, error) {
+			return r.server.PrintRandomImagePNGPathParse(ctx, req.(*PrintRandomImagePNGRequest))
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     r.server,
+			FullMethod: GreeterService_PrintRandomImagePNGPathParse_FullMethodName,
+		}
+
+		resp, err = r.interceptor(ctx, &req, info, handler)
+	} else {
+		resp, err = r.server.PrintRandomImagePNGPathParse(ctx, &req)
+	}
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, err)
+	}
+
+	httpResp, ok := resp.(*httpbody.HttpBody)
+	if !ok || httpResp == nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).Msg("invalid http response").ProtoErr(codes.Internal))
+	}
+	c.Set(v2.HeaderContentType, httpResp.GetContentType())
+	return c.Status(v2.StatusOK).Send(httpResp.GetData())
+}
+func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGQueryParse_Route(c *v2.Ctx) error {
+	ctx, cancel := context.WithCancel(c.Context())
+	defer cancel()
+
+	md := metadata.New(nil)
+	c.Request().Header.VisitAll(func(key, value []byte) {
+		md.Append(string(key), string(value))
+	})
+
+	ctx = metadata.NewIncomingContext(ctx, md)
+
+	var (
+		req  PrintRandomImagePNGRequest
+		resp any
+		err  error
+	)
+
+	req.X, err = utils.ParseInt32(c.Query("x"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "x").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.Y, err = utils.ParseInt32(c.Query("y"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "y").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	if r.interceptor != nil {
+		handler := func(ctx context.Context, req any) (any, error) {
+			return r.server.PrintRandomImagePNGQueryParse(ctx, req.(*PrintRandomImagePNGRequest))
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     r.server,
+			FullMethod: GreeterService_PrintRandomImagePNGQueryParse_FullMethodName,
+		}
+
+		resp, err = r.interceptor(ctx, &req, info, handler)
+	} else {
+		resp, err = r.server.PrintRandomImagePNGQueryParse(ctx, &req)
+	}
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, err)
+	}
+
+	httpResp, ok := resp.(*httpbody.HttpBody)
+	if !ok || httpResp == nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).Msg("invalid http response").ProtoErr(codes.Internal))
+	}
+	c.Set(v2.HeaderContentType, httpResp.GetContentType())
+	return c.Status(v2.StatusOK).Send(httpResp.GetData())
+}
+func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v2.Ctx) error {
+	ctx, cancel := context.WithCancel(c.Context())
+	defer cancel()
+
+	md := metadata.New(nil)
+	c.Request().Header.VisitAll(func(key, value []byte) {
+		md.Append(string(key), string(value))
+	})
+
+	ctx = metadata.NewIncomingContext(ctx, md)
+
+	var (
+		req  TestTypesReadRequest
+		resp any
+		err  error
+	)
+
+	req.Str = c.Params("str")
+
+	req.I64, err = utils.ParseInt64(c.Params("i64"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "i64").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.I32, err = utils.ParseInt32(c.Query("i32"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "i32").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.U32, err = utils.ParseUint32(c.Query("u32"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "u32").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.U64, err = utils.ParseUint64(c.Query("u64"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "u64").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.B, err = utils.ParseBool(c.Query("b"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "b").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.F, err = utils.ParseFloat32(c.Query("f"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "f").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.D, err = utils.ParseFloat64(c.Query("d"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "d").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	req.Bts, err = utils.ParseBytes(c.Query("bts"))
+	if err != nil {
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+			Str("field", "bts").
+			ProtoErr(codes.InvalidArgument))
+	}
+
+	if r.interceptor != nil {
+		handler := func(ctx context.Context, req any) (any, error) {
+			return r.server.TestTypesRead(ctx, req.(*TestTypesReadRequest))
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     r.server,
+			FullMethod: GreeterService_TestTypesRead_FullMethodName,
+		}
+
+		resp, err = r.interceptor(ctx, &req, info, handler)
+	} else {
+		resp, err = r.server.TestTypesRead(ctx, &req)
 	}
 	if err != nil {
 		return utils.HandleGRPCStatusError(c, err)

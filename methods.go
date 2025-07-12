@@ -6,8 +6,10 @@ import (
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
 	"slices"
+	"strings"
 	"unicode"
 )
 
@@ -35,7 +37,11 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) {
 }
 
 func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
-	g.P("var req ", method.Input.GoIdent)
+	g.P("var (")
+	g.P("req ", method.Input.GoIdent)
+	g.P("resp any")
+	g.P("err error")
+	g.P(")")
 	g.P()
 
 	hasExportedField := slices.ContainsFunc(method.Input.Fields, func(f *protogen.Field) bool {
@@ -44,10 +50,16 @@ func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
 
 	// use marshaller if we need
 	if hasExportedField {
-		g.P("if err := ", jsonUnmarshalImport.Ident("Unmarshal"), "(c.Body(), &req); err != nil {")
-		g.P("	return ", errorHandlersImport.Ident(*flagUnmarshalErrorHandleFunc), "(c, err)")
-		g.P("}")
-		g.P()
+		httpMethod, httpPath := httpMethodParamsFromGrpcMethod(method)
+
+		if httpMethod != "Get" {
+			g.P("if err := ", jsonUnmarshalImport.Ident("Unmarshal"), "(c.Body(), &req); err != nil {")
+			g.P("	return ", errorHandlersImport.Ident(*flagUnmarshalErrorHandleFunc), "(c, err)")
+			g.P("}")
+			g.P()
+		} else {
+			genReadReqFromQueryOrParams(g, method.Input, httpPath)
+		}
 
 		hasValidation := false
 		for _, field := range method.Input.Fields {
@@ -66,12 +78,63 @@ func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
 	}
 }
 
-func genMethodExecPart(g *protogen.GeneratedFile, method *protogen.Method) {
-	g.P("var (")
-	g.P("resp any")
-	g.P("err error")
-	g.P(")")
+func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Message, path string) {
+	for _, field := range message.Fields {
+		fieldName := field.GoName
+		protoName := field.Desc.TextName()
 
+		// определение источника (Query или Param)
+		var accessor string
+		if strings.Contains(path, ":"+protoName) {
+			accessor = `c.Params("` + protoName + `")`
+		} else {
+			accessor = `c.Query("` + protoName + `")`
+		}
+
+		// определение парсера
+		var parserFunc string
+		switch field.Desc.Kind() {
+		case protoreflect.StringKind:
+			parserFunc = "ParseString"
+			g.P("req.", fieldName, " = ", accessor)
+			g.P()
+			continue
+		case protoreflect.BoolKind:
+			parserFunc = "ParseBool"
+		case protoreflect.Int32Kind, protoreflect.Sint32Kind, protoreflect.Sfixed32Kind:
+			parserFunc = "ParseInt32"
+		case protoreflect.Int64Kind, protoreflect.Sint64Kind, protoreflect.Sfixed64Kind:
+			parserFunc = "ParseInt64"
+		case protoreflect.Uint32Kind, protoreflect.Fixed32Kind:
+			parserFunc = "ParseUint32"
+		case protoreflect.Uint64Kind, protoreflect.Fixed64Kind:
+			parserFunc = "ParseUint64"
+		case protoreflect.FloatKind:
+			parserFunc = "ParseFloat32"
+		case protoreflect.DoubleKind:
+			parserFunc = "ParseFloat64"
+		case protoreflect.BytesKind:
+			parserFunc = "ParseBytes"
+		default:
+			g.P("// unsupported type for ", fieldName)
+			continue
+		}
+
+		// генерация кода парсинга
+		g.P("req.", fieldName, ", err = ", parsersImport.Ident(parserFunc), "(", accessor, ")")
+		g.P("if err != nil {")
+		g.P(`  return `, errorHandlersImport.Ident(*flagGrpcErrorHandleFunc), `(c, `,
+			errorsBuilderImport.Ident("Err"),
+			`(err).Msg("parse query/params field failed").`)
+		g.P(`Str("field", "`, protoName, `").`)
+		g.P(`ProtoErr(`, protoCodesImport.Ident("InvalidArgument"), `))`)
+		g.P("}")
+		g.P()
+	}
+
+}
+
+func genMethodExecPart(g *protogen.GeneratedFile, method *protogen.Method) {
 	g.P("if r.interceptor != nil {")
 	g.P("handler := func(ctx context.Context, req any) (any, error) {")
 	g.P("return r.server.", method.GoName, "(ctx, req.(*", method.Input.GoIdent, "))")
@@ -88,7 +151,24 @@ func genMethodExecPart(g *protogen.GeneratedFile, method *protogen.Method) {
 
 	g.P("	if err != nil { return ", errorHandlersImport.Ident(*flagGrpcErrorHandleFunc), "(c, err) }\n")
 
-	g.P("	return c.JSON(resp)")
+	httpMethod, _ := httpMethodParamsFromGrpcMethod(method)
+
+	if httpMethod == "Get" && method.Output.GoIdent.GoName == "HttpBody" {
+		// Parse HTTP body response
+		g.P("    httpResp, ok := resp.(*", httpbodyImport.Ident("HttpBody"), ")")
+		g.P("    if !ok || httpResp == nil {")
+		g.P("        return ", errorHandlersImport.Ident(*flagGrpcErrorHandleFunc),
+			"(c, ",
+			errorsBuilderImport.Ident("Err"), "(nil).",
+			"Msg(\"invalid http response\").",
+			"ProtoErr(", protoCodesImport.Ident("Internal"), "))",
+		)
+		g.P("    }")
+		g.P("    c.Set(", fiberImport.Ident("HeaderContentType"), ", httpResp.GetContentType())")
+		g.P("    return c.Status(", fiberImport.Ident("StatusOK"), ").Send(httpResp.GetData())")
+	} else {
+		g.P("	return c.JSON(resp)")
+	}
 }
 
 func genRouteMethodName(method *protogen.Method) string {
@@ -96,9 +176,7 @@ func genRouteMethodName(method *protogen.Method) string {
 }
 
 func genFiberMethodRote(g *protogen.GeneratedFile, method *protogen.Method) {
-	opts := method.Desc.Options().(*descriptorpb.MethodOptions)
-
-	methodType, httpPath := grpcOptionToMethodAndPathString(opts)
+	methodType, httpPath := httpMethodParamsFromGrpcMethod(method)
 	if httpPath == "/" {
 		httpPath = fmt.Sprintf(`%s_%s_FullMethodName`, method.Parent.GoName, method.GoName)
 	} else {
@@ -108,8 +186,10 @@ func genFiberMethodRote(g *protogen.GeneratedFile, method *protogen.Method) {
 	g.P("	app.", methodType, `(`, httpPath, `, router.`, genRouteMethodName(method), `)`)
 }
 
-// grpcOptionToMethodAndPathString узнает метод из google.api.http
-func grpcOptionToMethodAndPathString(opts *descriptorpb.MethodOptions) (string, string) {
+// httpMethodParamsFromGrpcMethod узнает метод из аннотации google.api.http
+func httpMethodParamsFromGrpcMethod(method *protogen.Method) (string, string) {
+	opts := method.Desc.Options().(*descriptorpb.MethodOptions)
+
 	ext := proto.GetExtension(opts, annotations.E_Http)
 	var methodType, path string
 

@@ -37,6 +37,9 @@ func genImports(g *protogen.GeneratedFile) {
 	g.Import(grpcImport)
 	g.Import(grpcMetadataImport)
 	g.Import(errorHandlersImport)
+	g.Import(errorsBuilderImport)
+	g.Import(protoCodesImport)
+	g.Import(parsersImport)
 }
 
 func genHeader(plugin *protogen.Plugin, g *protogen.GeneratedFile, f *protogen.File) {

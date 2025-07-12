@@ -3,6 +3,8 @@ syntax = "proto3";
 package greeter;
 
 import "google/api/annotations.proto";
+import "google/api/httpbody.proto";
+import "google/protobuf/empty.proto";
 import "validate/validate.proto";
 
 option go_package = "gen/go/greeterpb;greeterpb";
@@ -14,6 +16,24 @@ service GreeterService {
       body: "*"
     };
   }
+
+  rpc PrintRandomImagePNGPathParse(PrintRandomImagePNGRequest) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "api/v1/print_random/:x/:y/image.png"
+    };
+  }
+
+  rpc PrintRandomImagePNGQueryParse(PrintRandomImagePNGRequest) returns (google.api.HttpBody) {
+    option (google.api.http) = {
+      get: "api/v1/random_image.png"
+    };
+  }
+
+  rpc TestTypesRead(TestTypesReadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      get: "/api/v1/test/types/:str/:i64"
+    };
+  }
 }
 
 message HelloRequest {
@@ -23,4 +43,21 @@ message HelloRequest {
 
 message HelloResponse {
   string message = 1;
+}
+
+message PrintRandomImagePNGRequest {
+  int32 x = 1;
+  int32 y = 2;
+}
+
+message TestTypesReadRequest {
+  string str = 1;
+  int64  i64 = 2;
+  int32  i32 = 3;
+  uint32 u32 = 4;
+  uint64 u64 = 5;
+  bool   b = 6;
+  float  f = 7;
+  double d = 8;
+  bytes  bts = 9;
 }
