@@ -2,8 +2,40 @@ package utils
 
 import (
 	"strconv"
+	"strings"
 	"time"
 )
+
+func FirstArgPtr[T any, E any](f T, s E) (*T, E) {
+	return &f, s
+}
+
+func ParseRepeated[T any](arr string, parser func(string) (T, error)) ([]T, error) {
+	j := 0
+	out := make([]T, 0, strings.Count(arr, ","))
+	for i := 0; i < len(arr); i++ {
+		if arr[i] != ',' {
+			continue
+		}
+
+		t, err := parser(arr[j:i])
+		if err != nil {
+			return nil, err
+		}
+
+		out = append(out, t)
+		j = i + 1
+	}
+
+	t, err := parser(arr[j:])
+	if err != nil {
+		return nil, err
+	}
+
+	out = append(out, t)
+
+	return out, nil
+}
 
 // ParseInt32 Integer types int32
 func ParseInt32(s string) (int32, error) {

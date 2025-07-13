@@ -219,14 +219,14 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 			ProtoErr(codes.InvalidArgument))
 	}
 
-	req.I32, err = utils.ParseInt32(c.Query("i32"))
+	req.I32, err = utils.FirstArgPtr(utils.ParseInt32(c.Query("i32")))
 	if err != nil {
 		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
 			Str("field", "i32").
 			ProtoErr(codes.InvalidArgument))
 	}
 
-	req.U32, err = utils.ParseUint32(c.Query("u32"))
+	req.U32, err = utils.ParseRepeated(c.Query("u32"), utils.ParseUint32)
 	if err != nil {
 		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
 			Str("field", "u32").

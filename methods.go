@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/envoyproxy/protoc-gen-validate/validate"
+	"github.com/xakepp35/pkg/xerrors"
 	"google.golang.org/genproto/googleapis/api/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
@@ -13,7 +14,7 @@ import (
 	"unicode"
 )
 
-func genMethod(g *protogen.GeneratedFile, method *protogen.Method) {
+func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 	g.P("func (r *", serviceRouterStructName(method.Parent), ")", genRouteMethodName(method), `(c *`, fiberImport.Ident("Ctx"), `) error {`)
 
 	g.P("ctx, cancel := ", contextImport.Ident("WithCancel"), "(c.Context())")
@@ -28,15 +29,19 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) {
 	g.P("ctx = metadata.NewIncomingContext(ctx, md)")
 	g.P()
 
-	genMethodReqPart(g, method)
+	err := genMethodReqPart(g, method)
+	if err != nil {
+		return err
+	}
 
 	genMethodExecPart(g, method)
 
 	g.P("	}")
 
+	return nil
 }
 
-func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
+func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) error {
 	g.P("var (")
 	g.P("req ", method.Input.GoIdent)
 	g.P("resp any")
@@ -58,7 +63,10 @@ func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
 			g.P("}")
 			g.P()
 		} else {
-			genReadReqFromQueryOrParams(g, method.Input, httpPath)
+			err := genReadReqFromQueryOrParams(g, method.Input, httpPath)
+			if err != nil {
+				return err
+			}
 		}
 
 		hasValidation := false
@@ -76,17 +84,22 @@ func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) {
 			g.P()
 		}
 	}
+
+	return nil
 }
 
-func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Message, path string) {
+func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Message, path string) error {
 	for _, field := range message.Fields {
 		fieldName := field.GoName
 		protoName := field.Desc.TextName()
+
+		var inPath bool
 
 		// определение источника (Query или Param)
 		var accessor string
 		if strings.Contains(path, ":"+protoName) {
 			accessor = `c.Params("` + protoName + `")`
+			inPath = true
 		} else {
 			accessor = `c.Query("` + protoName + `")`
 		}
@@ -120,8 +133,23 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 			continue
 		}
 
+		parseExpression := fmt.Sprintf("%s(%s)", g.QualifiedGoIdent(parsersImport.Ident(parserFunc)), accessor)
+
+		switch {
+		case field.Desc.HasPresence():
+			parseExpression = fmt.Sprintf("%s(%s)", g.QualifiedGoIdent(parsersImport.Ident("FirstArgPtr")), parseExpression)
+		case field.Desc.IsList():
+			if inPath {
+				return xerrors.Err(nil).Msg("repeated field in params").Str("field", fieldName).Err()
+			}
+			parseExpression = fmt.Sprintf("%s(%s, %s)",
+				g.QualifiedGoIdent(parsersImport.Ident("ParseRepeated")),
+				accessor, g.QualifiedGoIdent(parsersImport.Ident(parserFunc)),
+			)
+		}
+
 		// генерация кода парсинга
-		g.P("req.", fieldName, ", err = ", parsersImport.Ident(parserFunc), "(", accessor, ")")
+		g.P("req.", fieldName, ", err = ", parseExpression)
 		g.P("if err != nil {")
 		g.P(`  return `, errorHandlersImport.Ident(*flagGrpcErrorHandleFunc), `(c, `,
 			errorsBuilderImport.Ident("Err"),
@@ -132,6 +160,7 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 		g.P()
 	}
 
+	return nil
 }
 
 func genMethodExecPart(g *protogen.GeneratedFile, method *protogen.Method) {

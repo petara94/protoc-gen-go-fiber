@@ -1,10 +1,13 @@
 package main
 
-import "google.golang.org/protobuf/compiler/protogen"
+import (
+	"github.com/xakepp35/pkg/xerrors"
+	"google.golang.org/protobuf/compiler/protogen"
+)
 
-func genService(g *protogen.GeneratedFile, service *protogen.Service) {
+func genService(g *protogen.GeneratedFile, service *protogen.Service) error {
 	if len(service.Methods) == 0 {
-		return
+		return nil
 	}
 
 	genServiceRouter(g, service)
@@ -25,6 +28,11 @@ func genService(g *protogen.GeneratedFile, service *protogen.Service) {
 	g.P()
 
 	for _, method := range service.Methods {
-		genMethod(g, method)
+		err := genMethod(g, method)
+		if err != nil {
+			return xerrors.Err(err).Msg("method generation").Str("method", method.GoName).Err()
+		}
 	}
+
+	return nil
 }

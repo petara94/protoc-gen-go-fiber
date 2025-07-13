@@ -441,10 +441,6 @@ func (m *TestTypesReadRequest) validate(all bool) error {
 
 	// no validation rules for I64
 
-	// no validation rules for I32
-
-	// no validation rules for U32
-
 	// no validation rules for U64
 
 	// no validation rules for B
@@ -454,6 +450,10 @@ func (m *TestTypesReadRequest) validate(all bool) error {
 	// no validation rules for D
 
 	// no validation rules for Bts
+
+	if m.I32 != nil {
+		// no validation rules for I32
+	}
 
 	if len(errors) > 0 {
 		return TestTypesReadRequestMultiError(errors)

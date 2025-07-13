@@ -177,8 +177,8 @@ type TestTypesReadRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Str           string                 `protobuf:"bytes,1,opt,name=str,proto3" json:"str,omitempty"`
 	I64           int64                  `protobuf:"varint,2,opt,name=i64,proto3" json:"i64,omitempty"`
-	I32           int32                  `protobuf:"varint,3,opt,name=i32,proto3" json:"i32,omitempty"`
-	U32           uint32                 `protobuf:"varint,4,opt,name=u32,proto3" json:"u32,omitempty"`
+	I32           *int32                 `protobuf:"varint,3,opt,name=i32,proto3,oneof" json:"i32,omitempty"`
+	U32           []uint32               `protobuf:"varint,4,rep,packed,name=u32,proto3" json:"u32,omitempty"`
 	U64           uint64                 `protobuf:"varint,5,opt,name=u64,proto3" json:"u64,omitempty"`
 	B             bool                   `protobuf:"varint,6,opt,name=b,proto3" json:"b,omitempty"`
 	F             float32                `protobuf:"fixed32,7,opt,name=f,proto3" json:"f,omitempty"`
@@ -233,17 +233,17 @@ func (x *TestTypesReadRequest) GetI64() int64 {
 }
 
 func (x *TestTypesReadRequest) GetI32() int32 {
-	if x != nil {
-		return x.I32
+	if x != nil && x.I32 != nil {
+		return *x.I32
 	}
 	return 0
 }
 
-func (x *TestTypesReadRequest) GetU32() uint32 {
+func (x *TestTypesReadRequest) GetU32() []uint32 {
 	if x != nil {
 		return x.U32
 	}
-	return 0
+	return nil
 }
 
 func (x *TestTypesReadRequest) GetU64() uint64 {
@@ -293,17 +293,18 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
 	"\x1aPrintRandomImagePNGRequest\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x05R\x01y\"\xac\x01\n" +
+	"\x01y\x18\x02 \x01(\x05R\x01y\"\xb9\x01\n" +
 	"\x14TestTypesReadRequest\x12\x10\n" +
 	"\x03str\x18\x01 \x01(\tR\x03str\x12\x10\n" +
-	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x10\n" +
-	"\x03i32\x18\x03 \x01(\x05R\x03i32\x12\x10\n" +
-	"\x03u32\x18\x04 \x01(\rR\x03u32\x12\x10\n" +
+	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x15\n" +
+	"\x03i32\x18\x03 \x01(\x05H\x00R\x03i32\x88\x01\x01\x12\x10\n" +
+	"\x03u32\x18\x04 \x03(\rR\x03u32\x12\x10\n" +
 	"\x03u64\x18\x05 \x01(\x04R\x03u64\x12\f\n" +
 	"\x01b\x18\x06 \x01(\bR\x01b\x12\f\n" +
 	"\x01f\x18\a \x01(\x02R\x01f\x12\f\n" +
 	"\x01d\x18\b \x01(\x01R\x01d\x12\x10\n" +
-	"\x03bts\x18\t \x01(\fR\x03bts2\xd8\x03\n" +
+	"\x03bts\x18\t \x01(\fR\x03btsB\x06\n" +
+	"\x04_i322\xd8\x03\n" +
 	"\x0eGreeterService\x12R\n" +
 	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\fapi/v1/hello\x12\x86\x01\n" +
 	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\"+\x82\xd3\xe4\x93\x02%\x12#api/v1/print_random/:x/:y/image.png\x12{\n" +
@@ -352,6 +353,7 @@ func file_greeter_greeter_proto_init() {
 	if File_greeter_greeter_proto != nil {
 		return
 	}
+	file_greeter_greeter_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
