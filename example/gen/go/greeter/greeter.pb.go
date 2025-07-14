@@ -184,6 +184,7 @@ type TestTypesReadRequest struct {
 	F             float32                `protobuf:"fixed32,7,opt,name=f,proto3" json:"f,omitempty"`
 	D             float64                `protobuf:"fixed64,8,opt,name=d,proto3" json:"d,omitempty"`
 	Bts           []byte                 `protobuf:"bytes,9,opt,name=bts,proto3" json:"bts,omitempty"`
+	StrRep        []string               `protobuf:"bytes,10,rep,name=str_rep,json=strRep,proto3" json:"str_rep,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -281,6 +282,13 @@ func (x *TestTypesReadRequest) GetBts() []byte {
 	return nil
 }
 
+func (x *TestTypesReadRequest) GetStrRep() []string {
+	if x != nil {
+		return x.StrRep
+	}
+	return nil
+}
+
 var File_greeter_greeter_proto protoreflect.FileDescriptor
 
 const file_greeter_greeter_proto_rawDesc = "" +
@@ -293,7 +301,7 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
 	"\x1aPrintRandomImagePNGRequest\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x05R\x01y\"\xb9\x01\n" +
+	"\x01y\x18\x02 \x01(\x05R\x01y\"\xd2\x01\n" +
 	"\x14TestTypesReadRequest\x12\x10\n" +
 	"\x03str\x18\x01 \x01(\tR\x03str\x12\x10\n" +
 	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x15\n" +
@@ -303,12 +311,14 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x01b\x18\x06 \x01(\bR\x01b\x12\f\n" +
 	"\x01f\x18\a \x01(\x02R\x01f\x12\f\n" +
 	"\x01d\x18\b \x01(\x01R\x01d\x12\x10\n" +
-	"\x03bts\x18\t \x01(\fR\x03btsB\x06\n" +
-	"\x04_i322\xd8\x03\n" +
-	"\x0eGreeterService\x12R\n" +
-	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\fapi/v1/hello\x12\x86\x01\n" +
-	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\"+\x82\xd3\xe4\x93\x02%\x12#api/v1/print_random/:x/:y/image.png\x12{\n" +
-	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\"\x1f\x82\xd3\xe4\x93\x02\x19\x12\x17api/v1/random_image.png\x12l\n" +
+	"\x03bts\x18\t \x01(\fR\x03bts\x12\x17\n" +
+	"\astr_rep\x18\n" +
+	" \x03(\tR\x06strRepB\x06\n" +
+	"\x04_i322\xdb\x03\n" +
+	"\x0eGreeterService\x12S\n" +
+	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x87\x01\n" +
+	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\",\x82\xd3\xe4\x93\x02&\x12$/api/v1/print_random/:x/:y/image.png\x12|\n" +
+	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12l\n" +
 	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64B\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
 
 var (

@@ -2,7 +2,9 @@ package main
 
 import (
 	context "context"
+
 	"example/gen/go/greeter"
+
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/rs/zerolog/log"
 	httpbody "google.golang.org/genproto/googleapis/api/httpbody"

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/xakepp35/pkg/xerrors"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/types/pluginpb"
@@ -37,6 +38,7 @@ func generateFile(plugin *protogen.Plugin) error {
 
 func genImports(g *protogen.GeneratedFile) {
 	g.Import(contextImport)
+	g.Import(stringsImport)
 	g.Import(fiberImport)
 	g.Import(grpcImport)
 	g.Import(grpcMetadataImport)

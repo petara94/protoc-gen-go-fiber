@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"slices"
+	"strings"
+	"unicode"
+
 	"github.com/envoyproxy/protoc-gen-validate/validate"
 	"github.com/xakepp35/pkg/xerrors"
 	"google.golang.org/genproto/googleapis/api/annotations"
@@ -9,9 +13,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"slices"
-	"strings"
-	"unicode"
 )
 
 func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
@@ -37,6 +38,7 @@ func genMethod(g *protogen.GeneratedFile, method *protogen.Method) error {
 	genMethodExecPart(g, method)
 
 	g.P("	}")
+	g.P()
 
 	return nil
 }
@@ -109,6 +111,11 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 		switch field.Desc.Kind() {
 		case protoreflect.StringKind:
 			parserFunc = "ParseString"
+
+			if field.Desc.IsList() {
+				accessor = fmt.Sprintf(`%s(%s, ",")`, g.QualifiedGoIdent(stringsImport.Ident("Split")), accessor)
+			}
+
 			g.P("req.", fieldName, " = ", accessor)
 			g.P()
 			continue
