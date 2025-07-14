@@ -308,3 +308,229 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = HelloResponseValidationError{}
+
+// Validate checks the field values on PrintRandomImagePNGRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PrintRandomImagePNGRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PrintRandomImagePNGRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PrintRandomImagePNGRequestMultiError, or nil if none found.
+func (m *PrintRandomImagePNGRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PrintRandomImagePNGRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X
+
+	// no validation rules for Y
+
+	if len(errors) > 0 {
+		return PrintRandomImagePNGRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// PrintRandomImagePNGRequestMultiError is an error wrapping multiple
+// validation errors returned by PrintRandomImagePNGRequest.ValidateAll() if
+// the designated constraints aren't met.
+type PrintRandomImagePNGRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PrintRandomImagePNGRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PrintRandomImagePNGRequestMultiError) AllErrors() []error { return m }
+
+// PrintRandomImagePNGRequestValidationError is the validation error returned
+// by PrintRandomImagePNGRequest.Validate if the designated constraints aren't met.
+type PrintRandomImagePNGRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PrintRandomImagePNGRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PrintRandomImagePNGRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PrintRandomImagePNGRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PrintRandomImagePNGRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PrintRandomImagePNGRequestValidationError) ErrorName() string {
+	return "PrintRandomImagePNGRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PrintRandomImagePNGRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPrintRandomImagePNGRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PrintRandomImagePNGRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PrintRandomImagePNGRequestValidationError{}
+
+// Validate checks the field values on TestTypesReadRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TestTypesReadRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TestTypesReadRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TestTypesReadRequestMultiError, or nil if none found.
+func (m *TestTypesReadRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TestTypesReadRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Str
+
+	// no validation rules for I64
+
+	// no validation rules for U64
+
+	// no validation rules for B
+
+	// no validation rules for F
+
+	// no validation rules for D
+
+	// no validation rules for Bts
+
+	if m.I32 != nil {
+		// no validation rules for I32
+	}
+
+	if len(errors) > 0 {
+		return TestTypesReadRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// TestTypesReadRequestMultiError is an error wrapping multiple validation
+// errors returned by TestTypesReadRequest.ValidateAll() if the designated
+// constraints aren't met.
+type TestTypesReadRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TestTypesReadRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TestTypesReadRequestMultiError) AllErrors() []error { return m }
+
+// TestTypesReadRequestValidationError is the validation error returned by
+// TestTypesReadRequest.Validate if the designated constraints aren't met.
+type TestTypesReadRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TestTypesReadRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TestTypesReadRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TestTypesReadRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TestTypesReadRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TestTypesReadRequestValidationError) ErrorName() string {
+	return "TestTypesReadRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TestTypesReadRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTestTypesReadRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TestTypesReadRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TestTypesReadRequestValidationError{}

@@ -8,9 +8,11 @@ package greeterpb
 
 import (
 	context "context"
+	httpbody "google.golang.org/genproto/googleapis/api/httpbody"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,7 +21,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GreeterService_SayHello_FullMethodName = "/greeter.GreeterService/SayHello"
+	GreeterService_SayHello_FullMethodName                      = "/greeter.GreeterService/SayHello"
+	GreeterService_PrintRandomImagePNGPathParse_FullMethodName  = "/greeter.GreeterService/PrintRandomImagePNGPathParse"
+	GreeterService_PrintRandomImagePNGQueryParse_FullMethodName = "/greeter.GreeterService/PrintRandomImagePNGQueryParse"
+	GreeterService_TestTypesRead_FullMethodName                 = "/greeter.GreeterService/TestTypesRead"
 )
 
 // GreeterServiceClient is the client API for GreeterService service.
@@ -27,6 +32,9 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterServiceClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloResponse, error)
+	PrintRandomImagePNGPathParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
+	PrintRandomImagePNGQueryParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
+	TestTypesRead(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type greeterServiceClient struct {
@@ -47,11 +55,44 @@ func (c *greeterServiceClient) SayHello(ctx context.Context, in *HelloRequest, o
 	return out, nil
 }
 
+func (c *greeterServiceClient) PrintRandomImagePNGPathParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(httpbody.HttpBody)
+	err := c.cc.Invoke(ctx, GreeterService_PrintRandomImagePNGPathParse_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterServiceClient) PrintRandomImagePNGQueryParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(httpbody.HttpBody)
+	err := c.cc.Invoke(ctx, GreeterService_PrintRandomImagePNGQueryParse_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterServiceClient) TestTypesRead(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, GreeterService_TestTypesRead_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServiceServer is the server API for GreeterService service.
 // All implementations must embed UnimplementedGreeterServiceServer
 // for forward compatibility.
 type GreeterServiceServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloResponse, error)
+	PrintRandomImagePNGPathParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
+	PrintRandomImagePNGQueryParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
+	TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedGreeterServiceServer()
 }
 
@@ -64,6 +105,15 @@ type UnimplementedGreeterServiceServer struct{}
 
 func (UnimplementedGreeterServiceServer) SayHello(context.Context, *HelloRequest) (*HelloResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (UnimplementedGreeterServiceServer) PrintRandomImagePNGPathParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PrintRandomImagePNGPathParse not implemented")
+}
+func (UnimplementedGreeterServiceServer) PrintRandomImagePNGQueryParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PrintRandomImagePNGQueryParse not implemented")
+}
+func (UnimplementedGreeterServiceServer) TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestTypesRead not implemented")
 }
 func (UnimplementedGreeterServiceServer) mustEmbedUnimplementedGreeterServiceServer() {}
 func (UnimplementedGreeterServiceServer) testEmbeddedByValue()                        {}
@@ -104,6 +154,60 @@ func _GreeterService_SayHello_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GreeterService_PrintRandomImagePNGPathParse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrintRandomImagePNGRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServiceServer).PrintRandomImagePNGPathParse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreeterService_PrintRandomImagePNGPathParse_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServiceServer).PrintRandomImagePNGPathParse(ctx, req.(*PrintRandomImagePNGRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GreeterService_PrintRandomImagePNGQueryParse_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PrintRandomImagePNGRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServiceServer).PrintRandomImagePNGQueryParse(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreeterService_PrintRandomImagePNGQueryParse_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServiceServer).PrintRandomImagePNGQueryParse(ctx, req.(*PrintRandomImagePNGRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GreeterService_TestTypesRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestTypesReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServiceServer).TestTypesRead(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreeterService_TestTypesRead_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServiceServer).TestTypesRead(ctx, req.(*TestTypesReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GreeterService_ServiceDesc is the grpc.ServiceDesc for GreeterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +218,18 @@ var GreeterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHello",
 			Handler:    _GreeterService_SayHello_Handler,
+		},
+		{
+			MethodName: "PrintRandomImagePNGPathParse",
+			Handler:    _GreeterService_PrintRandomImagePNGPathParse_Handler,
+		},
+		{
+			MethodName: "PrintRandomImagePNGQueryParse",
+			Handler:    _GreeterService_PrintRandomImagePNGQueryParse_Handler,
+		},
+		{
+			MethodName: "TestTypesRead",
+			Handler:    _GreeterService_TestTypesRead_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

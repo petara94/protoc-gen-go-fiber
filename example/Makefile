@@ -1,5 +1,8 @@
 GOBIN=$(PWD)/bin
 
+IMAGE:=xakepp35/xprotoc-gen:latest
+
+
 generate:
 	bin/buf generate
 .PHONY: generate
@@ -22,3 +25,10 @@ install_tools:
 build_fiber_tool:
 	cd .. && GOBIN=$(GOBIN) go install
 .PHONY: build_fiber_tool
+
+copy_lib_from_docker:
+	docker create --name temp-xprotoc-gen $(IMAGE)
+	rm -rf lib
+	docker cp temp-xprotoc-gen:/app/lib lib
+	docker rm temp-xprotoc-gen
+.PHONY: copy_lib_from_docker
