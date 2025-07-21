@@ -108,16 +108,16 @@ func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGPathP
 
 	req.X, err = utils.ParseInt32(c.Params("x"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "x").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.Y, err = utils.ParseInt32(c.Params("y"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "y").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	if r.interceptor != nil {
@@ -139,7 +139,7 @@ func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGPathP
 
 	httpResp, ok := resp.(*httpbody.HttpBody)
 	if !ok || httpResp == nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).Msg("invalid http response").ProtoErr(codes.Internal))
+		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).MsgProto(codes.Internal, "invalid http response"))
 	}
 	c.Set(v2.HeaderContentType, httpResp.GetContentType())
 	return c.Status(v2.StatusOK).Send(httpResp.GetData())
@@ -164,16 +164,16 @@ func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGQuery
 
 	req.X, err = utils.ParseInt32(c.Query("x"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "x").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.Y, err = utils.ParseInt32(c.Query("y"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "y").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	if r.interceptor != nil {
@@ -195,7 +195,7 @@ func (r *__GreeterService_FiberRouter) __GreeterService_PrintRandomImagePNGQuery
 
 	httpResp, ok := resp.(*httpbody.HttpBody)
 	if !ok || httpResp == nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).Msg("invalid http response").ProtoErr(codes.Internal))
+		return utils.HandleGRPCStatusError(c, xerrors.Err(nil).MsgProto(codes.Internal, "invalid http response"))
 	}
 	c.Set(v2.HeaderContentType, httpResp.GetContentType())
 	return c.Status(v2.StatusOK).Send(httpResp.GetData())
@@ -222,58 +222,58 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 
 	req.I64, err = utils.ParseInt64(c.Params("i64"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "i64").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.I32, err = utils.FirstArgPtr(utils.ParseInt32(c.Query("i32")))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "i32").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.U32, err = utils.ParseRepeated(c.Query("u32"), utils.ParseUint32)
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "u32").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.U64, err = utils.ParseUint64(c.Query("u64"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "u64").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.B, err = utils.ParseBool(c.Query("b"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "b").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.F, err = utils.ParseFloat32(c.Query("f"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "f").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.D, err = utils.ParseFloat64(c.Query("d"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "d").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.Bts, err = utils.ParseBytes(c.Query("bts"))
 	if err != nil {
-		return utils.HandleGRPCStatusError(c, xerrors.Err(err).Msg("parse query/params field failed").
+		return utils.HandleGRPCStatusError(c, xerrors.Err(err).
 			Str("field", "bts").
-			ProtoErr(codes.InvalidArgument))
+			MsgProto(codes.InvalidArgument, "parse query/params field failed"))
 	}
 
 	req.StrRep = strings.Split(c.Query("str_rep"), ",")
