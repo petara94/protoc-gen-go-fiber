@@ -25,6 +25,7 @@ const (
 	GreeterService_PrintRandomImagePNGPathParse_FullMethodName  = "/greeter.GreeterService/PrintRandomImagePNGPathParse"
 	GreeterService_PrintRandomImagePNGQueryParse_FullMethodName = "/greeter.GreeterService/PrintRandomImagePNGQueryParse"
 	GreeterService_TestTypesRead_FullMethodName                 = "/greeter.GreeterService/TestTypesRead"
+	GreeterService_CreateUser_FullMethodName                    = "/greeter.GreeterService/CreateUser"
 )
 
 // GreeterServiceClient is the client API for GreeterService service.
@@ -35,6 +36,7 @@ type GreeterServiceClient interface {
 	PrintRandomImagePNGPathParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
 	PrintRandomImagePNGQueryParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
 	TestTypesRead(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 }
 
 type greeterServiceClient struct {
@@ -85,6 +87,16 @@ func (c *greeterServiceClient) TestTypesRead(ctx context.Context, in *TestTypesR
 	return out, nil
 }
 
+func (c *greeterServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, GreeterService_CreateUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServiceServer is the server API for GreeterService service.
 // All implementations must embed UnimplementedGreeterServiceServer
 // for forward compatibility.
@@ -93,6 +105,7 @@ type GreeterServiceServer interface {
 	PrintRandomImagePNGPathParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
 	PrintRandomImagePNGQueryParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
 	TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error)
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	mustEmbedUnimplementedGreeterServiceServer()
 }
 
@@ -114,6 +127,9 @@ func (UnimplementedGreeterServiceServer) PrintRandomImagePNGQueryParse(context.C
 }
 func (UnimplementedGreeterServiceServer) TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestTypesRead not implemented")
+}
+func (UnimplementedGreeterServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
 }
 func (UnimplementedGreeterServiceServer) mustEmbedUnimplementedGreeterServiceServer() {}
 func (UnimplementedGreeterServiceServer) testEmbeddedByValue()                        {}
@@ -208,6 +224,24 @@ func _GreeterService_TestTypesRead_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GreeterService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServiceServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreeterService_CreateUser_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServiceServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GreeterService_ServiceDesc is the grpc.ServiceDesc for GreeterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -230,6 +264,10 @@ var GreeterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestTypesRead",
 			Handler:    _GreeterService_TestTypesRead_Handler,
+		},
+		{
+			MethodName: "CreateUser",
+			Handler:    _GreeterService_CreateUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
