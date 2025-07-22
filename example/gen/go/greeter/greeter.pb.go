@@ -289,6 +289,118 @@ func (x *TestTypesReadRequest) GetStrRep() []string {
 	return nil
 }
 
+type CreateUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserRequest) Reset() {
+	*x = CreateUserRequest{}
+	mi := &file_greeter_greeter_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserRequest) ProtoMessage() {}
+
+func (x *CreateUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_greeter_greeter_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserRequest.ProtoReflect.Descriptor instead.
+func (*CreateUserRequest) Descriptor() ([]byte, []int) {
+	return file_greeter_greeter_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateUserRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CreateUserRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+type CreateUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Email         string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateUserResponse) Reset() {
+	*x = CreateUserResponse{}
+	mi := &file_greeter_greeter_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateUserResponse) ProtoMessage() {}
+
+func (x *CreateUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_greeter_greeter_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateUserResponse.ProtoReflect.Descriptor instead.
+func (*CreateUserResponse) Descriptor() ([]byte, []int) {
+	return file_greeter_greeter_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateUserResponse) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *CreateUserResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *CreateUserResponse) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
 var File_greeter_greeter_proto protoreflect.FileDescriptor
 
 const file_greeter_greeter_proto_rawDesc = "" +
@@ -314,12 +426,21 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x03bts\x18\t \x01(\fR\x03bts\x12\x17\n" +
 	"\astr_rep\x18\n" +
 	" \x03(\tR\x06strRepB\x06\n" +
-	"\x04_i322\xdb\x03\n" +
+	"\x04_i32\"W\n" +
+	"\x11CreateUserRequest\x12#\n" +
+	"\busername\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x03R\busername\x12\x1d\n" +
+	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\"V\n" +
+	"\x12CreateUserResponse\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email2\xbb\x04\n" +
 	"\x0eGreeterService\x12S\n" +
 	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x87\x01\n" +
 	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\",\x82\xd3\xe4\x93\x02&\x12$/api/v1/print_random/:x/:y/image.png\x12|\n" +
 	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12l\n" +
-	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64B\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
+	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64\x12^\n" +
+	"\n" +
+	"CreateUser\x12\x1a.greeter.CreateUserRequest\x1a\x1b.greeter.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/api/v1/userB\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
 
 var (
 	file_greeter_greeter_proto_rawDescOnce sync.Once
@@ -333,26 +454,30 @@ func file_greeter_greeter_proto_rawDescGZIP() []byte {
 	return file_greeter_greeter_proto_rawDescData
 }
 
-var file_greeter_greeter_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_greeter_greeter_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_greeter_greeter_proto_goTypes = []any{
 	(*HelloRequest)(nil),               // 0: greeter.HelloRequest
 	(*HelloResponse)(nil),              // 1: greeter.HelloResponse
 	(*PrintRandomImagePNGRequest)(nil), // 2: greeter.PrintRandomImagePNGRequest
 	(*TestTypesReadRequest)(nil),       // 3: greeter.TestTypesReadRequest
-	(*httpbody.HttpBody)(nil),          // 4: google.api.HttpBody
-	(*emptypb.Empty)(nil),              // 5: google.protobuf.Empty
+	(*CreateUserRequest)(nil),          // 4: greeter.CreateUserRequest
+	(*CreateUserResponse)(nil),         // 5: greeter.CreateUserResponse
+	(*httpbody.HttpBody)(nil),          // 6: google.api.HttpBody
+	(*emptypb.Empty)(nil),              // 7: google.protobuf.Empty
 }
 var file_greeter_greeter_proto_depIdxs = []int32{
 	0, // 0: greeter.GreeterService.SayHello:input_type -> greeter.HelloRequest
 	2, // 1: greeter.GreeterService.PrintRandomImagePNGPathParse:input_type -> greeter.PrintRandomImagePNGRequest
 	2, // 2: greeter.GreeterService.PrintRandomImagePNGQueryParse:input_type -> greeter.PrintRandomImagePNGRequest
 	3, // 3: greeter.GreeterService.TestTypesRead:input_type -> greeter.TestTypesReadRequest
-	1, // 4: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
-	4, // 5: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
-	4, // 6: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
-	5, // 7: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	4, // 4: greeter.GreeterService.CreateUser:input_type -> greeter.CreateUserRequest
+	1, // 5: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
+	6, // 6: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
+	6, // 7: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
+	7, // 8: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
+	5, // 9: greeter.GreeterService.CreateUser:output_type -> greeter.CreateUserResponse
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -370,7 +495,7 @@ func file_greeter_greeter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_greeter_greeter_proto_rawDesc), len(file_greeter_greeter_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

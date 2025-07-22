@@ -34,6 +34,13 @@ service GreeterService {
       get: "/api/v1/test/types/:str/:i64"
     };
   }
+
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/user"
+      body: "*"
+    };
+  }
 }
 
 message HelloRequest {
@@ -61,4 +68,15 @@ message TestTypesReadRequest {
   double d = 8;
   bytes  bts = 9;
   repeated string str_rep = 10;
+}
+
+message CreateUserRequest {
+  string username = 1 [(validate.rules).string.min_len = 3];
+  string email = 2 [(validate.rules).string.email = true];
+}
+
+message CreateUserResponse {
+  string id = 1;
+  string username = 2;
+  string email = 3;
 }

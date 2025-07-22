@@ -50,8 +50,8 @@ github.com/vmihailenco/msgpack/v5 v5.4.1 h1:cQriyiUvjTwOHg8QZaPihLWeRAAVoCpE00IU
 github.com/vmihailenco/msgpack/v5 v5.4.1/go.mod h1:GaZTsDaehaPpQVyxrf5mtQlH+pc21PIudVV/E3rRQok=
 github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=
 github.com/vmihailenco/tagparser/v2 v2.0.0/go.mod h1:Wri+At7QHww0WTrCBeu4J6bNtoV6mEfg5OIWRZA9qds=
-github.com/xakepp35/pkg v0.0.0-20250721091347-79a44bf9dcb4 h1:al3j6YmPi/OFO6nZJ3mtDvo9xP9cU7/zfXSk8w6ygDU=
-github.com/xakepp35/pkg v0.0.0-20250721091347-79a44bf9dcb4/go.mod h1:o18d1TehAe0GhYg0P6weZXhBPv4PM2P9EORvlSWdc8I=
+github.com/xakepp35/pkg v0.0.0-20250721093702-774261e47b23 h1:GegUdYR9Rysw1425C9MlK87KBRLxRsZFsJpaMYF0+8I=
+github.com/xakepp35/pkg v0.0.0-20250721093702-774261e47b23/go.mod h1:o18d1TehAe0GhYg0P6weZXhBPv4PM2P9EORvlSWdc8I=
 github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
 github.com/xyproto/randomstring v1.0.5/go.mod h1:rgmS5DeNXLivK7YprL0pY+lTuhNQW3iGxZ18UQApw/E=
 go.opentelemetry.io/auto/sdk v1.1.0 h1:cH53jehLUN6UFLY71z+NDOiNJqDdPRaXzTel0sJySYA=
