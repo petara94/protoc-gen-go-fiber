@@ -91,13 +91,20 @@ func genMethodReqPart(g *protogen.GeneratedFile, method *protogen.Method) error 
 }
 
 func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Message, path string) error {
+	// 1. Check: all path fields must not be optional
+	for _, field := range message.Fields {
+		protoName := field.Desc.TextName()
+		if strings.Contains(path, ":"+protoName) && field.Desc.HasPresence() {
+			return xerrors.Err(nil).Str("field", field.GoName).Msg("optional field in path params is not allowed")
+		}
+	}
+
 	for _, field := range message.Fields {
 		fieldName := field.GoName
 		protoName := field.Desc.TextName()
 
 		var inPath bool
 
-		// определение источника (Query или Param)
 		// determine the source (Query or Param)
 		var accessor string
 		if strings.Contains(path, ":"+protoName) {
@@ -107,7 +114,6 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 			accessor = `c.Query("` + protoName + `")`
 		}
 
-		// определение парсера
 		// determine the parser
 		var parserFunc string
 		var parserType string
@@ -154,10 +160,23 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 
 		switch {
 		case field.Desc.HasPresence():
+			// Для optional query: если пусто — пропускаем парсинг
+			if !inPath {
+				g.P("if v := ", accessor, "; v != \"\" {")
+				g.P("  req.", fieldName, ", err = ", g.QualifiedGoIdent(parsersImport.Ident("FirstArgPtr")), "(", fmt.Sprintf("Parse%s(v)", parserFunc), ")")
+				g.P("  if err != nil {")
+				g.P(`    return HandleGRPCStatusError(c, `,
+					errorsBuilderImport.Ident("Err"), `(err).Str("field", "`, protoName, `").MsgProto(`, protoCodesImport.Ident("InvalidArgument"), `, "parse query/params field failed"))`)
+				g.P("  }")
+				g.P("}")
+				g.P()
+				continue
+			}
+			// Для path optional — мы уже выше вернули ошибку, сюда не попадём
 			parseExpression = fmt.Sprintf("%s(%s)", g.QualifiedGoIdent(parsersImport.Ident("FirstArgPtr")), parseExpression)
 		case field.Desc.IsList():
 			if inPath {
-				return xerrors.Err(nil).Msg("repeated field in params").Str("field", fieldName).Err()
+				return xerrors.Err(nil).Str("field", fieldName).Msg("repeated field in params")
 			}
 			parseExpression = fmt.Sprintf("%s[%s](%s, Parse%s)", g.QualifiedGoIdent(parsersImport.Ident("ParseRepeated")), parserType, accessor, parserFunc)
 		}

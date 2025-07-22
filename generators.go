@@ -29,7 +29,7 @@ func generateFile(plugin *protogen.Plugin) error {
 		for _, service := range f.Services {
 			err := genService(g, service)
 			if err != nil {
-				return xerrors.Err(err).Msg("service generation").Str("service", service.GoName).Err()
+				return xerrors.Err(err).Str("service", service.GoName).Msg("service generation")
 			}
 		}
 	}

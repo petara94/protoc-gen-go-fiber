@@ -10,7 +10,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/petara94/protoc-gen-go-fiber v0.0.0-00010101000000-000000000000
 	github.com/rs/zerolog v1.34.0
-	github.com/xakepp35/pkg v0.0.0-20250721091347-79a44bf9dcb4
+	github.com/xakepp35/pkg v0.0.0-20250721093702-774261e47b23
 	google.golang.org/genproto/googleapis/api v0.0.0-20250421163800-61c742ae3ef0
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
