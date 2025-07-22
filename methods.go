@@ -98,6 +98,7 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 		var inPath bool
 
 		// определение источника (Query или Param)
+		// determine the source (Query or Param)
 		var accessor string
 		if strings.Contains(path, ":"+protoName) {
 			accessor = `c.Params("` + protoName + `")`
@@ -107,6 +108,7 @@ func genReadReqFromQueryOrParams(g *protogen.GeneratedFile, message *protogen.Me
 		}
 
 		// определение парсера
+		// determine the parser
 		var parserFunc string
 		var parserType string
 		switch field.Desc.Kind() {
@@ -219,7 +221,7 @@ func genFiberMethodRote(g *protogen.GeneratedFile, method *protogen.Method) {
 	g.P("	app.", methodType, `(`, httpPath, `, router.`, genRouteMethodName(method), `)`)
 }
 
-// httpMethodParamsFromGrpcMethod узнает метод из аннотации google.api.http
+// httpMethodParamsFromGrpcMethod detects the HTTP method from the google.api.http annotation
 func httpMethodParamsFromGrpcMethod(method *protogen.Method) (string, string) {
 	opts := method.Desc.Options().(*descriptorpb.MethodOptions)
 
