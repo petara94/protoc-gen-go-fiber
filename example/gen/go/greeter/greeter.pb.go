@@ -433,12 +433,12 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x12CreateUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email2\xb9\x05\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email2\xbd\x05\n" +
 	"\x0eGreeterService\x12S\n" +
-	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x87\x01\n" +
-	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\",\x82\xd3\xe4\x93\x02&\x12$/api/v1/print_random/:x/:y/image.png\x12|\n" +
-	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12l\n" +
-	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64\x12|\n" +
+	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x89\x01\n" +
+	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\".\x82\xd3\xe4\x93\x02(\x12&/api/v1/print_random/{x}/{y}/image.png\x12|\n" +
+	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12n\n" +
+	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/v1/test/types/{str}/{i64}\x12|\n" +
 	"\x1cTestTypesReadPostPathAllowed\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/api/v1/test/types/{str}/:i64\x12^\n" +
 	"\n" +
 	"CreateUser\x12\x1a.greeter.CreateUserRequest\x1a\x1b.greeter.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/api/v1/userB\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
