@@ -19,7 +19,7 @@ service GreeterService {
 
   rpc PrintRandomImagePNGPathParse(PrintRandomImagePNGRequest) returns (google.api.HttpBody) {
     option (google.api.http) = {
-      get: "/api/v1/print_random/:x/:y/image.png"
+      get: "/api/v1/print_random/{x}/{y}/image.png"
     };
   }
 
@@ -31,7 +31,13 @@ service GreeterService {
 
   rpc TestTypesRead(TestTypesReadRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      get: "/api/v1/test/types/:str/:i64"
+      get: "/api/v1/test/types/{str}/{i64}"
+    };
+  }
+
+  rpc TestTypesReadPostPathAllowed(TestTypesReadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/api/v1/test/types/{str}/:i64"
     };
   }
 
@@ -58,7 +64,7 @@ message PrintRandomImagePNGRequest {
 }
 
 message TestTypesReadRequest {
-  string str = 1;
+  string str = 1 [(validate.rules).string.min_len = 3];
   int64  i64 = 2;
   optional int32  i32 = 3;
   repeated uint32 u32 = 4;

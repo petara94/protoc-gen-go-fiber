@@ -25,6 +25,7 @@ const (
 	GreeterService_PrintRandomImagePNGPathParse_FullMethodName  = "/greeter.GreeterService/PrintRandomImagePNGPathParse"
 	GreeterService_PrintRandomImagePNGQueryParse_FullMethodName = "/greeter.GreeterService/PrintRandomImagePNGQueryParse"
 	GreeterService_TestTypesRead_FullMethodName                 = "/greeter.GreeterService/TestTypesRead"
+	GreeterService_TestTypesReadPostPathAllowed_FullMethodName  = "/greeter.GreeterService/TestTypesReadPostPathAllowed"
 	GreeterService_CreateUser_FullMethodName                    = "/greeter.GreeterService/CreateUser"
 )
 
@@ -36,6 +37,7 @@ type GreeterServiceClient interface {
 	PrintRandomImagePNGPathParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
 	PrintRandomImagePNGQueryParse(ctx context.Context, in *PrintRandomImagePNGRequest, opts ...grpc.CallOption) (*httpbody.HttpBody, error)
 	TestTypesRead(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	TestTypesReadPostPathAllowed(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 }
 
@@ -87,6 +89,16 @@ func (c *greeterServiceClient) TestTypesRead(ctx context.Context, in *TestTypesR
 	return out, nil
 }
 
+func (c *greeterServiceClient) TestTypesReadPostPathAllowed(ctx context.Context, in *TestTypesReadRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, GreeterService_TestTypesReadPostPathAllowed_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *greeterServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateUserResponse)
@@ -105,6 +117,7 @@ type GreeterServiceServer interface {
 	PrintRandomImagePNGPathParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
 	PrintRandomImagePNGQueryParse(context.Context, *PrintRandomImagePNGRequest) (*httpbody.HttpBody, error)
 	TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error)
+	TestTypesReadPostPathAllowed(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error)
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	mustEmbedUnimplementedGreeterServiceServer()
 }
@@ -127,6 +140,9 @@ func (UnimplementedGreeterServiceServer) PrintRandomImagePNGQueryParse(context.C
 }
 func (UnimplementedGreeterServiceServer) TestTypesRead(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestTypesRead not implemented")
+}
+func (UnimplementedGreeterServiceServer) TestTypesReadPostPathAllowed(context.Context, *TestTypesReadRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestTypesReadPostPathAllowed not implemented")
 }
 func (UnimplementedGreeterServiceServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
@@ -224,6 +240,24 @@ func _GreeterService_TestTypesRead_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GreeterService_TestTypesReadPostPathAllowed_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestTypesReadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServiceServer).TestTypesReadPostPathAllowed(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GreeterService_TestTypesReadPostPathAllowed_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServiceServer).TestTypesReadPostPathAllowed(ctx, req.(*TestTypesReadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _GreeterService_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateUserRequest)
 	if err := dec(in); err != nil {
@@ -264,6 +298,10 @@ var GreeterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestTypesRead",
 			Handler:    _GreeterService_TestTypesRead_Handler,
+		},
+		{
+			MethodName: "TestTypesReadPostPathAllowed",
+			Handler:    _GreeterService_TestTypesReadPostPathAllowed_Handler,
 		},
 		{
 			MethodName: "CreateUser",

@@ -413,9 +413,9 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
 	"\x1aPrintRandomImagePNGRequest\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x05R\x01y\"\xd2\x01\n" +
-	"\x14TestTypesReadRequest\x12\x10\n" +
-	"\x03str\x18\x01 \x01(\tR\x03str\x12\x10\n" +
+	"\x01y\x18\x02 \x01(\x05R\x01y\"\xdb\x01\n" +
+	"\x14TestTypesReadRequest\x12\x19\n" +
+	"\x03str\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x03R\x03str\x12\x10\n" +
 	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x15\n" +
 	"\x03i32\x18\x03 \x01(\x05H\x00R\x03i32\x88\x01\x01\x12\x10\n" +
 	"\x03u32\x18\x04 \x03(\rR\x03u32\x12\x10\n" +
@@ -433,12 +433,13 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x12CreateUserResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x14\n" +
-	"\x05email\x18\x03 \x01(\tR\x05email2\xbb\x04\n" +
+	"\x05email\x18\x03 \x01(\tR\x05email2\xb9\x05\n" +
 	"\x0eGreeterService\x12S\n" +
 	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x87\x01\n" +
 	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\",\x82\xd3\xe4\x93\x02&\x12$/api/v1/print_random/:x/:y/image.png\x12|\n" +
 	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12l\n" +
-	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64\x12^\n" +
+	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/api/v1/test/types/:str/:i64\x12|\n" +
+	"\x1cTestTypesReadPostPathAllowed\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/api/v1/test/types/{str}/:i64\x12^\n" +
 	"\n" +
 	"CreateUser\x12\x1a.greeter.CreateUserRequest\x1a\x1b.greeter.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/api/v1/userB\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
 
@@ -470,14 +471,16 @@ var file_greeter_greeter_proto_depIdxs = []int32{
 	2, // 1: greeter.GreeterService.PrintRandomImagePNGPathParse:input_type -> greeter.PrintRandomImagePNGRequest
 	2, // 2: greeter.GreeterService.PrintRandomImagePNGQueryParse:input_type -> greeter.PrintRandomImagePNGRequest
 	3, // 3: greeter.GreeterService.TestTypesRead:input_type -> greeter.TestTypesReadRequest
-	4, // 4: greeter.GreeterService.CreateUser:input_type -> greeter.CreateUserRequest
-	1, // 5: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
-	6, // 6: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
-	6, // 7: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
-	7, // 8: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
-	5, // 9: greeter.GreeterService.CreateUser:output_type -> greeter.CreateUserResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	3, // 4: greeter.GreeterService.TestTypesReadPostPathAllowed:input_type -> greeter.TestTypesReadRequest
+	4, // 5: greeter.GreeterService.CreateUser:input_type -> greeter.CreateUserRequest
+	1, // 6: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
+	6, // 7: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
+	6, // 8: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
+	7, // 9: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
+	7, // 10: greeter.GreeterService.TestTypesReadPostPathAllowed:output_type -> google.protobuf.Empty
+	5, // 11: greeter.GreeterService.CreateUser:output_type -> greeter.CreateUserResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

@@ -437,7 +437,16 @@ func (m *TestTypesReadRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Str
+	if utf8.RuneCountInString(m.GetStr()) < 3 {
+		err := TestTypesReadRequestValidationError{
+			field:  "Str",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for I64
 
