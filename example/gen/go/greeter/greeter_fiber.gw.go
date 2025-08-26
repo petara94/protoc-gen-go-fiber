@@ -59,6 +59,7 @@ func RegisterGreeterServiceFiberRoutes(app *v2.App, server GreeterServiceServer,
 	app.Get("/api/v1/print_random/:x/:y/image.png", router.__GreeterService_PrintRandomImagePNGPathParse_Route)
 	app.Get("/api/v1/random_image.png", router.__GreeterService_PrintRandomImagePNGQueryParse_Route)
 	app.Get("/api/v1/test/types/:str/:i64", router.__GreeterService_TestTypesRead_Route)
+	app.Post("/api/v1/test/types/:str/:i64", router.__GreeterService_TestTypesReadPostPathAllowed_Route)
 	app.Post("/api/v1/user", router.__GreeterService_CreateUser_Route)
 }
 
@@ -274,6 +275,10 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 
 	req.StrRep = strings.Split(c.Query("str_rep"), ",")
 
+	if err := req.Validate(); err != nil {
+		return HandleValidationError(c, err)
+	}
+
 	if r.interceptor != nil {
 		handler := func(ctx context.Context, req any) (any, error) {
 			return r.server.TestTypesRead(ctx, req.(*TestTypesReadRequest))
@@ -286,6 +291,58 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 		resp, err = r.interceptor(ctx, &req, info, handler)
 	} else {
 		resp, err = r.server.TestTypesRead(ctx, &req)
+	}
+	if err != nil {
+		return HandleGRPCStatusError(c, err)
+	}
+
+	return c.JSON(resp)
+}
+
+func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesReadPostPathAllowed_Route(c *v2.Ctx) error {
+	ctx, cancel := context.WithCancel(c.UserContext())
+	defer cancel()
+
+	md := metadata.New(nil)
+	c.Request().Header.VisitAll(func(key, value []byte) {
+		md.Append(string(key), string(value))
+	})
+
+	ctx = metadata.NewIncomingContext(ctx, md)
+
+	var (
+		req  TestTypesReadRequest
+		resp any
+		err  error
+	)
+
+	if err := Unmarshal(c.Body(), &req); err != nil {
+		return HandleUnmarshalError(c, err)
+	}
+
+	req.Str = c.Params("str")
+
+	req.I64, err = ParseInt64(c.Params("i64"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "i64").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	if err := req.Validate(); err != nil {
+		return HandleValidationError(c, err)
+	}
+
+	if r.interceptor != nil {
+		handler := func(ctx context.Context, req any) (any, error) {
+			return r.server.TestTypesReadPostPathAllowed(ctx, req.(*TestTypesReadRequest))
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     r.server,
+			FullMethod: GreeterService_TestTypesReadPostPathAllowed_FullMethodName,
+		}
+
+		resp, err = r.interceptor(ctx, &req, info, handler)
+	} else {
+		resp, err = r.server.TestTypesReadPostPathAllowed(ctx, &req)
 	}
 	if err != nil {
 		return HandleGRPCStatusError(c, err)
