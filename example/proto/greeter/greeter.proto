@@ -74,6 +74,7 @@ message TestTypesReadRequest {
   double d = 8;
   bytes  bts = 9;
   repeated string str_rep = 10;
+  optional string kek = 11;
 }
 
 message CreateUserRequest {

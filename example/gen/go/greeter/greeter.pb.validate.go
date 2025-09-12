@@ -464,6 +464,10 @@ func (m *TestTypesReadRequest) validate(all bool) error {
 		// no validation rules for I32
 	}
 
+	if m.Kek != nil {
+		// no validation rules for Kek
+	}
+
 	if len(errors) > 0 {
 		return TestTypesReadRequestMultiError(errors)
 	}
