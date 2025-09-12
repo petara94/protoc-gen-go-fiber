@@ -185,6 +185,7 @@ type TestTypesReadRequest struct {
 	D             float64                `protobuf:"fixed64,8,opt,name=d,proto3" json:"d,omitempty"`
 	Bts           []byte                 `protobuf:"bytes,9,opt,name=bts,proto3" json:"bts,omitempty"`
 	StrRep        []string               `protobuf:"bytes,10,rep,name=str_rep,json=strRep,proto3" json:"str_rep,omitempty"`
+	Kek           *string                `protobuf:"bytes,11,opt,name=kek,proto3,oneof" json:"kek,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -287,6 +288,13 @@ func (x *TestTypesReadRequest) GetStrRep() []string {
 		return x.StrRep
 	}
 	return nil
+}
+
+func (x *TestTypesReadRequest) GetKek() string {
+	if x != nil && x.Kek != nil {
+		return *x.Kek
+	}
+	return ""
 }
 
 type CreateUserRequest struct {
@@ -413,7 +421,7 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
 	"\x1aPrintRandomImagePNGRequest\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x05R\x01y\"\xdb\x01\n" +
+	"\x01y\x18\x02 \x01(\x05R\x01y\"\xfa\x01\n" +
 	"\x14TestTypesReadRequest\x12\x19\n" +
 	"\x03str\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x03R\x03str\x12\x10\n" +
 	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x15\n" +
@@ -425,8 +433,10 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x01d\x18\b \x01(\x01R\x01d\x12\x10\n" +
 	"\x03bts\x18\t \x01(\fR\x03bts\x12\x17\n" +
 	"\astr_rep\x18\n" +
-	" \x03(\tR\x06strRepB\x06\n" +
-	"\x04_i32\"W\n" +
+	" \x03(\tR\x06strRep\x12\x15\n" +
+	"\x03kek\x18\v \x01(\tH\x01R\x03kek\x88\x01\x01B\x06\n" +
+	"\x04_i32B\x06\n" +
+	"\x04_kek\"W\n" +
 	"\x11CreateUserRequest\x12#\n" +
 	"\busername\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x03R\busername\x12\x1d\n" +
 	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\"V\n" +
