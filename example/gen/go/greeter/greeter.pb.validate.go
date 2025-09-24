@@ -460,12 +460,60 @@ func (m *TestTypesReadRequest) validate(all bool) error {
 
 	// no validation rules for Bts
 
+	if _, ok := _TestTypesReadRequest_Color_NotInLookup[m.GetColor()]; ok {
+		err := TestTypesReadRequestValidationError{
+			field:  "Color",
+			reason: "value must not be in list [UNKNOWN]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := Color_name[int32(m.GetColor())]; !ok {
+		err := TestTypesReadRequestValidationError{
+			field:  "Color",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.I32 != nil {
 		// no validation rules for I32
 	}
 
 	if m.Kek != nil {
 		// no validation rules for Kek
+	}
+
+	if m.BadColor != nil {
+
+		if _, ok := _TestTypesReadRequest_BadColor_NotInLookup[m.GetBadColor()]; ok {
+			err := TestTypesReadRequestValidationError{
+				field:  "BadColor",
+				reason: "value must not be in list [UNKNOWN]",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if _, ok := Color_name[int32(m.GetBadColor())]; !ok {
+			err := TestTypesReadRequestValidationError{
+				field:  "BadColor",
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -547,6 +595,14 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TestTypesReadRequestValidationError{}
+
+var _TestTypesReadRequest_Color_NotInLookup = map[Color]struct{}{
+	0: {},
+}
+
+var _TestTypesReadRequest_BadColor_NotInLookup = map[Color]struct{}{
+	0: {},
+}
 
 // Validate checks the field values on CreateUserRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
