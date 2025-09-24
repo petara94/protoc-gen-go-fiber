@@ -18,27 +18,19 @@ service GreeterService {
   }
 
   rpc PrintRandomImagePNGPathParse(PrintRandomImagePNGRequest) returns (google.api.HttpBody) {
-    option (google.api.http) = {
-      get: "/api/v1/print_random/{x}/{y}/image.png"
-    };
+    option (google.api.http) = {get: "/api/v1/print_random/{x}/{y}/image.png"};
   }
 
   rpc PrintRandomImagePNGQueryParse(PrintRandomImagePNGRequest) returns (google.api.HttpBody) {
-    option (google.api.http) = {
-      get: "/api/v1/random_image.png"
-    };
+    option (google.api.http) = {get: "/api/v1/random_image.png"};
   }
 
   rpc TestTypesRead(TestTypesReadRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      get: "/api/v1/test/types/{str}/{i64}"
-    };
+    option (google.api.http) = {get: "/api/v1/test/types/{str}/{i64}"};
   }
 
   rpc TestTypesReadPostPathAllowed(TestTypesReadRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/api/v1/test/types/{str}/:i64"
-    };
+    option (google.api.http) = {post: "/api/v1/test/types/{str}/:i64"};
   }
 
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
@@ -47,6 +39,12 @@ service GreeterService {
       body: "*"
     };
   }
+}
+
+enum Color {
+  UNKNOWN = 0;
+  BLUE = 1;
+  RED = 2;
 }
 
 message HelloRequest {
@@ -65,16 +63,24 @@ message PrintRandomImagePNGRequest {
 
 message TestTypesReadRequest {
   string str = 1 [(validate.rules).string.min_len = 3];
-  int64  i64 = 2;
-  optional int32  i32 = 3;
+  int64 i64 = 2;
+  optional int32 i32 = 3;
   repeated uint32 u32 = 4;
   uint64 u64 = 5;
-  bool   b = 6;
-  float  f = 7;
+  bool b = 6;
+  float f = 7;
   double d = 8;
-  bytes  bts = 9;
+  bytes bts = 9;
   repeated string str_rep = 10;
   optional string kek = 11;
+  Color color = 12 [(validate.rules).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
+  optional Color bad_color = 13 [(validate.rules).enum = {
+    defined_only: true
+    not_in: [0]
+  }];
 }
 
 message CreateUserRequest {

@@ -61,6 +61,7 @@ func RegisterGreeterServiceFiberRoutes(app *v2.App, server GreeterServiceServer,
 	app.Get("/api/v1/random_image.png", router.__GreeterService_PrintRandomImagePNGQueryParse_Route)
 	app.Get("/api/v1/test/types/:str/:i64", router.__GreeterService_TestTypesRead_Route)
 	app.Post("/api/v1/test/types/:str/:i64", router.__GreeterService_TestTypesReadPostPathAllowed_Route)
+	app.Get("/api/v1/test/types/:str", router.__GreeterService_TestEnumTypesQueryPrams_Route)
 	app.Post("/api/v1/user", router.__GreeterService_CreateUser_Route)
 }
 
@@ -285,6 +286,16 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 		}
 	}
 
+	if v, ok := Color_value[c.Query("color")]; ok {
+		req.Color = Color(v)
+	} else {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "color").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	if v, ok := Color_value[c.Query("bad_color")]; ok {
+		req.BadColor = utils.Ptr(Color(v))
+	}
+
 	if err := req.Validate(); err != nil {
 		return HandleValidationError(c, err)
 	}
@@ -355,6 +366,110 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesReadPostPathAll
 		resp, err = r.interceptor(ctx, &req, info, handler)
 	} else {
 		resp, err = r.server.TestTypesReadPostPathAllowed(ctx, &req)
+	}
+	if err != nil {
+		return HandleGRPCStatusError(c, err)
+	}
+
+	return c.JSON(resp)
+}
+
+func (r *__GreeterService_FiberRouter) __GreeterService_TestEnumTypesQueryPrams_Route(c *v2.Ctx) error {
+	ctx, cancel := context.WithCancel(c.UserContext())
+	defer cancel()
+
+	md := metadata.New(nil)
+	c.Request().Header.VisitAll(func(key, value []byte) {
+		md.Append(string(key), string(value))
+	})
+
+	ctx = metadata.NewIncomingContext(ctx, md)
+
+	var (
+		req  TestTypesReadRequest
+		resp any
+		err  error
+	)
+
+	req.Str = c.Params("str")
+
+	req.I64, err = ParseInt64(c.Query("i64"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "i64").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	if v := c.Query("i32"); v != "" {
+		req.I32, err = utils.FirstArgPtr(ParseInt32(v))
+		if err != nil {
+			return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "i32").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+		}
+	}
+
+	req.U32, err = utils.ParseRepeated[uint32](c.Query("u32"), ParseUint32)
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "u32").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.U64, err = ParseUint64(c.Query("u64"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "u64").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.B, err = ParseBool(c.Query("b"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "b").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.F, err = ParseFloat32(c.Query("f"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "f").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.D, err = ParseFloat64(c.Query("d"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "d").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.Bts, err = ParseBytes(c.Query("bts"))
+	if err != nil {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "bts").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	req.StrRep = strings.Split(c.Query("str_rep"), ",")
+
+	if v := c.Query("kek"); v != "" {
+		req.Kek, err = utils.FirstArgPtr(ParseString(v))
+		if err != nil {
+			return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "kek").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+		}
+	}
+
+	if v, ok := Color_value[c.Query("color")]; ok {
+		req.Color = Color(v)
+	} else {
+		return HandleGRPCStatusError(c, xerrors.Err(err).Str("field", "color").MsgProto(codes.InvalidArgument, "parse query/params field failed"))
+	}
+
+	if v, ok := Color_value[c.Query("bad_color")]; ok {
+		req.BadColor = utils.Ptr(Color(v))
+	}
+
+	if err := req.Validate(); err != nil {
+		return HandleValidationError(c, err)
+	}
+
+	if r.interceptor != nil {
+		handler := func(ctx context.Context, req any) (any, error) {
+			return r.server.TestEnumTypesQueryPrams(ctx, req.(*TestTypesReadRequest))
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     r.server,
+			FullMethod: GreeterService_TestEnumTypesQueryPrams_FullMethodName,
+		}
+
+		resp, err = r.interceptor(ctx, &req, info, handler)
+	} else {
+		resp, err = r.server.TestEnumTypesQueryPrams(ctx, &req)
 	}
 	if err != nil {
 		return HandleGRPCStatusError(c, err)
