@@ -237,6 +237,7 @@ type TestTypesReadRequest struct {
 	Kek           *string                `protobuf:"bytes,11,opt,name=kek,proto3,oneof" json:"kek,omitempty"`
 	Color         Color                  `protobuf:"varint,12,opt,name=color,proto3,enum=greeter.Color" json:"color,omitempty"`
 	BadColor      *Color                 `protobuf:"varint,13,opt,name=bad_color,json=badColor,proto3,enum=greeter.Color,oneof" json:"bad_color,omitempty"`
+	BadColors     []Color                `protobuf:"varint,14,rep,packed,name=bad_colors,json=badColors,proto3,enum=greeter.Color" json:"bad_colors,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -360,6 +361,13 @@ func (x *TestTypesReadRequest) GetBadColor() Color {
 		return *x.BadColor
 	}
 	return Color_UNKNOWN
+}
+
+func (x *TestTypesReadRequest) GetBadColors() []Color {
+	if x != nil {
+		return x.BadColors
+	}
+	return nil
 }
 
 type CreateUserRequest struct {
@@ -486,7 +494,7 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"8\n" +
 	"\x1aPrintRandomImagePNGRequest\x12\f\n" +
 	"\x01x\x18\x01 \x01(\x05R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x05R\x01y\"\xf8\x02\n" +
+	"\x01y\x18\x02 \x01(\x05R\x01y\"\xa7\x03\n" +
 	"\x14TestTypesReadRequest\x12\x19\n" +
 	"\x03str\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x03R\x03str\x12\x10\n" +
 	"\x03i64\x18\x02 \x01(\x03R\x03i64\x12\x15\n" +
@@ -503,7 +511,9 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x05color\x18\f \x01(\x0e2\x0e.greeter.ColorB\n" +
 	"\xfaB\a\x82\x01\x04\x10\x01 \x00R\x05color\x12<\n" +
 	"\tbad_color\x18\r \x01(\x0e2\x0e.greeter.ColorB\n" +
-	"\xfaB\a\x82\x01\x04\x10\x01 \x00H\x02R\bbadColor\x88\x01\x01B\x06\n" +
+	"\xfaB\a\x82\x01\x04\x10\x01 \x00H\x02R\bbadColor\x88\x01\x01\x12-\n" +
+	"\n" +
+	"bad_colors\x18\x0e \x03(\x0e2\x0e.greeter.ColorR\tbadColorsB\x06\n" +
 	"\x04_i32B\x06\n" +
 	"\x04_kekB\f\n" +
 	"\n" +
@@ -518,13 +528,13 @@ const file_greeter_greeter_proto_rawDesc = "" +
 	"\x05Color\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\b\n" +
 	"\x04BLUE\x10\x01\x12\a\n" +
-	"\x03RED\x10\x022\xbd\x05\n" +
+	"\x03RED\x10\x022\xbe\x05\n" +
 	"\x0eGreeterService\x12S\n" +
 	"\bSayHello\x12\x15.greeter.HelloRequest\x1a\x16.greeter.HelloResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/hello\x12\x89\x01\n" +
 	"\x1cPrintRandomImagePNGPathParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\".\x82\xd3\xe4\x93\x02(\x12&/api/v1/print_random/{x}/{y}/image.png\x12|\n" +
 	"\x1dPrintRandomImagePNGQueryParse\x12#.greeter.PrintRandomImagePNGRequest\x1a\x14.google.api.HttpBody\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/api/v1/random_image.png\x12n\n" +
-	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/v1/test/types/{str}/{i64}\x12|\n" +
-	"\x1cTestTypesReadPostPathAllowed\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/api/v1/test/types/{str}/:i64\x12^\n" +
+	"\rTestTypesRead\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 \x12\x1e/api/v1/test/types/{str}/{i64}\x12}\n" +
+	"\x1cTestTypesReadPostPathAllowed\x12\x1d.greeter.TestTypesReadRequest\x1a\x16.google.protobuf.Empty\"&\x82\xd3\xe4\x93\x02 \"\x1e/api/v1/test/types/{str}/{i64}\x12^\n" +
 	"\n" +
 	"CreateUser\x12\x1a.greeter.CreateUserRequest\x1a\x1b.greeter.CreateUserResponse\"\x17\x82\xd3\xe4\x93\x02\x11:\x01*\"\f/api/v1/userB\x1cZ\x1agen/go/greeterpb;greeterpbb\x06proto3"
 
@@ -556,23 +566,24 @@ var file_greeter_greeter_proto_goTypes = []any{
 var file_greeter_greeter_proto_depIdxs = []int32{
 	0, // 0: greeter.TestTypesReadRequest.color:type_name -> greeter.Color
 	0, // 1: greeter.TestTypesReadRequest.bad_color:type_name -> greeter.Color
-	1, // 2: greeter.GreeterService.SayHello:input_type -> greeter.HelloRequest
-	3, // 3: greeter.GreeterService.PrintRandomImagePNGPathParse:input_type -> greeter.PrintRandomImagePNGRequest
-	3, // 4: greeter.GreeterService.PrintRandomImagePNGQueryParse:input_type -> greeter.PrintRandomImagePNGRequest
-	4, // 5: greeter.GreeterService.TestTypesRead:input_type -> greeter.TestTypesReadRequest
-	4, // 6: greeter.GreeterService.TestTypesReadPostPathAllowed:input_type -> greeter.TestTypesReadRequest
-	5, // 7: greeter.GreeterService.CreateUser:input_type -> greeter.CreateUserRequest
-	2, // 8: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
-	7, // 9: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
-	7, // 10: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
-	8, // 11: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
-	8, // 12: greeter.GreeterService.TestTypesReadPostPathAllowed:output_type -> google.protobuf.Empty
-	6, // 13: greeter.GreeterService.CreateUser:output_type -> greeter.CreateUserResponse
-	8, // [8:14] is the sub-list for method output_type
-	2, // [2:8] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 2: greeter.TestTypesReadRequest.bad_colors:type_name -> greeter.Color
+	1, // 3: greeter.GreeterService.SayHello:input_type -> greeter.HelloRequest
+	3, // 4: greeter.GreeterService.PrintRandomImagePNGPathParse:input_type -> greeter.PrintRandomImagePNGRequest
+	3, // 5: greeter.GreeterService.PrintRandomImagePNGQueryParse:input_type -> greeter.PrintRandomImagePNGRequest
+	4, // 6: greeter.GreeterService.TestTypesRead:input_type -> greeter.TestTypesReadRequest
+	4, // 7: greeter.GreeterService.TestTypesReadPostPathAllowed:input_type -> greeter.TestTypesReadRequest
+	5, // 8: greeter.GreeterService.CreateUser:input_type -> greeter.CreateUserRequest
+	2, // 9: greeter.GreeterService.SayHello:output_type -> greeter.HelloResponse
+	7, // 10: greeter.GreeterService.PrintRandomImagePNGPathParse:output_type -> google.api.HttpBody
+	7, // 11: greeter.GreeterService.PrintRandomImagePNGQueryParse:output_type -> google.api.HttpBody
+	8, // 12: greeter.GreeterService.TestTypesRead:output_type -> google.protobuf.Empty
+	8, // 13: greeter.GreeterService.TestTypesReadPostPathAllowed:output_type -> google.protobuf.Empty
+	6, // 14: greeter.GreeterService.CreateUser:output_type -> greeter.CreateUserResponse
+	9, // [9:15] is the sub-list for method output_type
+	3, // [3:9] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_greeter_greeter_proto_init() }
