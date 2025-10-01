@@ -30,7 +30,7 @@ service GreeterService {
   }
 
   rpc TestTypesReadPostPathAllowed(TestTypesReadRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {post: "/api/v1/test/types/{str}/:i64"};
+    option (google.api.http) = {post: "/api/v1/test/types/{str}/{i64}"};
   }
 
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
@@ -81,6 +81,7 @@ message TestTypesReadRequest {
     defined_only: true
     not_in: [0]
   }];
+  repeated Color bad_colors = 14;
 }
 
 message CreateUserRequest {

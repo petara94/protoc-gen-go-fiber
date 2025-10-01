@@ -295,6 +295,14 @@ func (r *__GreeterService_FiberRouter) __GreeterService_TestTypesRead_Route(c *v
 		req.BadColor = utils.Ptr(Color(v))
 	}
 
+	c.Context().QueryArgs().VisitAll(func(key, value []byte) {
+		if string(key) == "bad_colors" {
+			if v, ok := Color_value[string(value)]; ok {
+				req.BadColors = append(req.BadColors, Color(v))
+			}
+		}
+	})
+
 	if err := req.Validate(); err != nil {
 		return HandleValidationError(c, err)
 	}
